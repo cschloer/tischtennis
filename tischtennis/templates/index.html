@@ -2,7 +2,124 @@
 {{ define "head" }}
 {{ end }}
 {{ define "body" }}
-hello world
+<div class="container mt-5">
+  <div class="columns">
+    <div class="column">
+      <div class="wall-city-logo-left">
+        <figure class="image">
+          <img src="https://drive.google.com/uc?export=view&id=1ZGJ9TijCBd34_3y9UNzqh6nRS_TjRlqO" />
+        </figure>
+      </div>
+    </div>
+    <div class="column">
+      <div class="block">
+          <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">
+            {{ .Title }}
+          <h2>
+      </div>
+      <div class="block mx-2">
+        <table class="table mx-auto is-fullwidth">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>
+                Score
+                <span
+                  class="icon is-small has-tooltip-multiline has-tooltip-bottom"
+                  data-tooltip="The score is calculated using the Perron-Frobenius Theorem. The eigenvector corresponding to the largest eigenvalue is the score vector.">
+                  <i class="far fa-question-circle"></i>
+                </span>
+              </th>
+              <th>Name</th>
+              <th>Record</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range $index, $Person := .People }}
+              <tr>
+                <td>{{ len (printf "a%*s" $index "")}}</td>
+                {{ if (eq $Person.Score -1.0) }}
+                  <td>
+                      -
+                  </td>
+                {{else}}
+                  <td class="has-text-info">
+                    {{mul $Person.Score 1000.0}}
+                  </td>
+                {{end}}
+                <td>{{ $Person.Name }}</td>
+                <td>
+                  <span class="has-text-success">{{ .Wins }}</span> -
+                  <span class="has-text-danger">{{ .Losses }}</span>
+                </td>
+              </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+      <div class="modal add-games-modal">
+        <div class="modal-background"></div>
+        <div class="modal-content">
+          <div class="modal-card-body">
+            <div class="block has-text-centered">
+              <h2 class="is-size-2 has-text-black">
+                Who are you?
+              </h2>
+            </div>
+            <div class="block">
+              <table class="table is-fullwidth has-text-centered">
+                <tbody>
+                  {{ range $Person := .AlphSortedPeople }}
+                    <tr>
+                      <td>
+                        <a href="/person/{{ $Person.Id }}" class="is-size-4">
+                          {{ if $Person.FaIcon }}
+                            <i class="{{ $Person.FaIcon }} mr-2"></i>
+                          {{ end }}
+                          {{ $Person.Name }}
+                        </a>
+                      </td>
+                    </tr>
+                  {{ end }}
+                  <tr><td>
+                  <a href="/admin" class="has-text-grey-light is-size-4">
+                    <i class="fas fa-user-cog mr-2"></i>
+                    Admin
+                  </a>
+                  </td>
+                  </tr>
+
+                </tbody>
+
+              </table>
+            </div>
+          </div>
+        </div>
+        <button class="modal-close is-large" aria-label="close"></button>
+      </div>
+      <div class="block has-text-centered">
+        <button class="add-games-button button is-outlined">
+          <span class="icon is-small mr-1">
+            <i class="fas fa-table-tennis"></i>
+          </span>
+          <span>Add more games</span>
+        </button>
+        <script>
+          $('.add-games-button').on('click', () => {
+            $('.add-games-modal').toggleClass('is-active');
+          })
+          $('.add-games-modal .modal-background, .add-games-modal .modal-close').on(
+            'click',
+            () => {
+              $('.add-games-modal').toggleClass('is-active');
+            }
+          )
+        </script>
+      </div>
+    </div>
+    <div class="column">
+    </div>
+</div>
 <!-- /container -->
 
 {{ end }}

@@ -1,7 +1,10 @@
 {
-  "name": "tischtennis",
-  "version": "1.29.2",
-  "description": "Example on Making Parameterized Get and Post Request with Golang",
-  "author": "Pramono Winata <pramono_winata@gyahoo.com>",
-  "license": "MIT"
+  "dependencies": {
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "serverless-apigw-binary": "^0.4.4",
+    "serverless-aws-static-file-handler": "^4.0.2",
+    "serverless-s3-sync": "^3.1.0"
+  }
 }

@@ -14,3 +14,7 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 tischtennis/bin
+tischtennis/env.*.json
+tischtennis/node_modules
+tischtennis/tmp
+tischtennis/.serverless
