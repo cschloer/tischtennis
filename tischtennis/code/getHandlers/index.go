@@ -35,7 +35,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	people := []database.Person{
 		database.Person{
 			Name:   "Lucas",
-			Id:     2,
+			Id:     "adfa-adfadfa",
 			FaIcon: "fas fa-wave",
 			Wins:   5,
 			Losses: 12,
@@ -43,7 +43,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		},
 		database.Person{
 			Name:   "Conrad",
-			Id:     1,
+			Id:     "adfadf134-01",
 			FaIcon: "fas fa-wave",
 			Wins:   12,
 			Losses: 5,

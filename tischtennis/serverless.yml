@@ -3,13 +3,18 @@ plugins:
   - serverless-aws-static-file-handler
 frameworkVersion: ">=2.24.0"
 
-
-
-
 provider:
   name: aws
   profile: tischtennis
   environment: ${file(env.${opt:stage, 'dev'}.json)}
+  region: us-east-1
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:*
+      Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${opt:stage, 'dev'}_person"
+
     
 package:
  individually: true
@@ -43,15 +48,15 @@ functions:
             parameters:
               querystrings:
                 name: true
-  post:
+  admin_post:
     runtime: go1.x
-    handler: bin/postBin
+    handler: bin/adminPostBin
     package:
       include:
-        - ./bin/getQueryBin
+        - ./bin/adminPostBin
     events:
       - http:
-          path: post
+          path: /admin
           method: post
 
   static:
@@ -69,6 +74,25 @@ functions:
       - http:
           path: static/{pathvar+}
           method: get
+
+resources: # CloudFormation template syntax from here on.
+  Resources:
+    PersonTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: ${opt:stage, 'dev'}_person
+        AttributeDefinitions:
+          - AttributeName: Id
+            AttributeType: S
+
+        KeySchema:
+          - AttributeName: Id
+            KeyType: HASH
+
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
 
 
 #    The following are a few example events you can configure

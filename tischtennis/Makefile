@@ -3,7 +3,7 @@
 build:
 	cd code/getHandlers && env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o ../../bin/indexBin index.go && cd ../..
 	cd code/getHandlers && env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o ../../bin/getQueryBin getQueryExample.go && cd ../..
-	cd postFolder && env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o ../bin/postBin ./postExample.go && cd ..
+	cd code/postHandlers && env GOARCH=amd64 GOOS=linux go build -ldflags="-s -w" -o ../../bin/adminPostBin admin.go && cd ../..
 
 clean:
 	rm -rf ./bin ./vendor Gopkg.lock
