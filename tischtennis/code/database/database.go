@@ -96,6 +96,7 @@ func GetPeople() (people []Person, err error) {
 
 func GetGames(people []Person, onlyReporter bool, limit int) (gamesMap map[string][]Game, err error) {
 	// TODO add limit
+	// TODO ensure it's actually sorting by Created properly
 	gamesMap = make(map[string][]Game)
 	for _, person := range people {
 		input := &dynamodb.QueryInput{
