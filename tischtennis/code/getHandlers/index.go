@@ -26,12 +26,11 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	fmt.Println("PEOPLE", people)
-	fmt.Println("ALPH SORT", helpers.AlphSortPeople(people))
 	data := IndexPageData{
 		Version:           helpers.VERSION,
 		BasePath:          helpers.BASE_PATH,
 		Title:             "Tischtennis",
-		ScoreSortedPeople: people,
+		ScoreSortedPeople: helpers.ScoreSortPeople(people),
 		AlphSortedPeople:  helpers.AlphSortPeople(people),
 	}
 

@@ -113,7 +113,7 @@ resources: # CloudFormation template syntax from here on.
       Type: AWS::DynamoDB::Table
       DeletionPolicy: Retain
       Properties:
-        TableName: ${opt:stage, 'dev'}_person
+        TableName: tischtennis_${opt:stage, 'dev'}_person
         AttributeDefinitions:
           - AttributeName: Id
             AttributeType: S
@@ -121,6 +121,25 @@ resources: # CloudFormation template syntax from here on.
         KeySchema:
           - AttributeName: Id
             KeyType: HASH
+
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    GameTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: tischtennis_${opt:stage, 'dev'}_game
+        AttributeDefinitions:
+          - AttributeName: PersonId
+            AttributeType: S
+          - AttributeName: Created
+            AttributeType: N
+        KeySchema:
+          - AttributeName: PersonId
+            KeyType: HASH
+          - AttributeName: Created
+            KeyType: RANGE
 
         ProvisionedThroughput:
           ReadCapacityUnits: 1

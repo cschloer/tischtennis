@@ -6,8 +6,9 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/aws/aws-sdk-go/service/dynamodb/dynamodbattribute"
-	"github.com/google/uuid"
+	"github.com/rs/xid"
 	"os"
+	"time"
 
 	"errors"
 	"fmt"
@@ -15,12 +16,12 @@ import (
 
 type Person struct {
 	Id          string
-	Score       float64
+	Score       float32
 	Name        string
 	FaIcon      string
-	Wins        int64
-	Losses      int64
-	NumReported int64
+	Wins        int32
+	Losses      int32
+	NumReported int32
 	// TODO make sure person access key isn't being sent to the front end
 }
 type Game struct {
@@ -28,19 +29,20 @@ type Game struct {
 	Created       int64
 	OtherPersonId string
 	Reporter      bool
-	Wins          int64
-	Losses        int64
+	Wins          int32
+	Losses        int32
 }
 
 // Person with AccessKey
 type Person_DANGEROUS struct {
-	Id        string
-	Score     float64
-	Name      string
-	FaIcon    string
-	Wins      int64
-	Losses    int64
-	AccessKey string
+	Id          string
+	Score       float32
+	Name        string
+	FaIcon      string
+	Wins        int32
+	Losses      int32
+	NumReported int32
+	AccessKey   string
 }
 
 // Initialize a session that the SDK will use to load
@@ -60,67 +62,71 @@ var svc = dynamodb.New(sess)
 
 var ENVIRONMENT = os.Getenv("ENVIRONMENT")
 
+func _createId() string {
+	return xid.New().String()
+
+}
+
+func _getTableName(table string) string {
+	return "tischtennis_" + ENVIRONMENT + "_" + table
+}
+
 func GetPeople() (people []Person, err error) {
-	people = []Person{
-		Person{
-			Name:   "Lucas",
-			Id:     "abc",
-			FaIcon: "fas fa-chess-knight",
-			Wins:   5,
-			Losses: 12,
-			Score:  0.3573,
-		},
-		Person{
-			Name:   "Conrad",
-			Id:     "efg",
-			FaIcon: "fas fa-water",
-			Wins:   12,
-			Losses: 5,
-			Score:  0.6173,
-		},
-		Person{
-			Name:   "Christian",
-			Id:     "hij",
-			FaIcon: "fas fa-cat",
-			Wins:   9,
-			Losses: 3,
-			Score:  0.4512,
-		},
+	// TODO eventually set up pagination
+	scanInput := &dynamodb.ScanInput{
+		TableName: aws.String(_getTableName("person")),
+	}
+	result, err := svc.Scan(scanInput)
+	if err != nil {
+		return people, err
+	}
+	people = make([]Person, len(result.Items))
+	for i, item := range result.Items {
+		person := Person{}
+
+		err = dynamodbattribute.UnmarshalMap(item, &person)
+
+		if err != nil {
+			return people, err
+		}
+		people[i] = person
 	}
 	return people, nil
 }
 
-func GetGames(people []Person, onlyReporter bool, limit int) (games map[string][]Game, err error) {
-	games = make(map[string][]Game)
-	// A map to add people names to the games
+func GetGames(people []Person, onlyReporter bool, limit int) (gamesMap map[string][]Game, err error) {
+	// TODO add limit
+	gamesMap = make(map[string][]Game)
 	for _, person := range people {
-		// TODO make query to to get games
-		personGames := []Game{
-			Game{
-				PersonId:      person.Id,
-				OtherPersonId: "abc",
-				Wins:          4,
-				Losses:        1,
-				Reporter:      false,
-			},
-			Game{
-				PersonId:      person.Id,
-				OtherPersonId: "efg",
-				Wins:          8,
-				Losses:        4,
-				Reporter:      false,
-			},
-			Game{
-				PersonId:      person.Id,
-				OtherPersonId: "hij",
-				Wins:          2,
-				Losses:        6,
-				Reporter:      true,
+		input := &dynamodb.QueryInput{
+			TableName:              aws.String(_getTableName("game")),
+			KeyConditionExpression: aws.String("PersonId = :hashKey"),
+			ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+				":hashKey": {
+					S: aws.String(person.Id),
+				},
 			},
 		}
-		games[person.Id] = personGames
+
+		result, err := svc.Query(input)
+		if err != nil {
+			return gamesMap, err
+		}
+		games := make([]Game, len(result.Items))
+		for i, item := range result.Items {
+			game := Game{}
+
+			err = dynamodbattribute.UnmarshalMap(item, &game)
+			fmt.Println("GAME", game)
+
+			if err != nil {
+				return gamesMap, err
+			}
+			games[i] = game
+		}
+		gamesMap[person.Id] = games
 	}
-	return games, nil
+	return gamesMap, nil
 }
 
 func GetPerson(personId string) (person Person, err error) {
@@ -138,70 +144,130 @@ func GetPersonAccessKey(personId int) (personAccessKey string, err error) {
 
 }
 
-func _createId() string {
-	return uuid.New().String()
-
-}
-
 func AdminDatabase() (res string, err error) {
-	fmt.Println("INSIDE ADMINE DATABASE")
-	fmt.Println(svc)
-	tableName := ENVIRONMENT + "_person"
-	id := _createId()
-	fmt.Println("a1")
-	item := Person_DANGEROUS{
-		Id:     id,
-		Score:  .5321,
-		Name:   "Conrad",
-		FaIcon: "fas fa-wave",
-		Wins:   53,
-		Losses: 14,
+	tableNamePerson := _getTableName("person")
+	items := []Person_DANGEROUS{
+		Person_DANGEROUS{
+			Name:      "Lucas",
+			Id:        _createId(),
+			FaIcon:    "fas fa-chess-knight",
+			Wins:      5,
+			Losses:    12,
+			Score:     0.3573,
+			AccessKey: "123",
+		},
+		Person_DANGEROUS{
+			Name:      "Conrad",
+			Id:        _createId(),
+			FaIcon:    "fas fa-water",
+			Wins:      12,
+			Losses:    5,
+			Score:     0.6173,
+			AccessKey: "123",
+		},
+		Person_DANGEROUS{
+			Name:      "Christian",
+			Id:        _createId(),
+			FaIcon:    "fas fa-cat",
+			Wins:      9,
+			Losses:    3,
+			Score:     0.4512,
+			AccessKey: "123",
+		},
 	}
-	fmt.Println("a1")
 
-	av, err := dynamodbattribute.MarshalMap(item)
-	fmt.Println("a2")
-	if err != nil {
-		return "", err
+	ids := make([]string, 0)
+	for _, item := range items {
+
+		ids = append(ids, item.Id)
+		av, err := dynamodbattribute.MarshalMap(item)
+		if err != nil {
+			return "", err
+		}
+
+		input := &dynamodb.PutItemInput{
+			Item:      av,
+			TableName: aws.String(tableNamePerson),
+		}
+
+		_, err = svc.PutItem(input)
+		if err != nil {
+			return "", err
+		}
 	}
 
-	input := &dynamodb.PutItemInput{
-		Item:      av,
-		TableName: aws.String(tableName),
+	tableNameGame := _getTableName("game")
+	created := time.Now().UnixNano()
+	games := []Game{
+		Game{
+			PersonId:      ids[0],
+			Created:       created,
+			OtherPersonId: ids[1],
+			Wins:          5,
+			Losses:        6,
+			Reporter:      false,
+		},
+		Game{
+			PersonId:      ids[1],
+			Created:       created,
+			OtherPersonId: ids[0],
+			Wins:          6,
+			Losses:        5,
+			Reporter:      true,
+		},
+		Game{
+			PersonId:      ids[0],
+			Created:       created + 1,
+			OtherPersonId: ids[2],
+			Wins:          11,
+			Losses:        3,
+			Reporter:      true,
+		},
+		Game{
+			PersonId:      ids[2],
+			Created:       created + 1,
+			OtherPersonId: ids[0],
+			Wins:          3,
+			Losses:        11,
+			Reporter:      true,
+		},
 	}
-	fmt.Println("a3")
+	for _, item := range games {
 
-	_, err = svc.PutItem(input)
-	fmt.Println("a4")
-	if err != nil {
-		return "", err
+		av, err := dynamodbattribute.MarshalMap(item)
+		if err != nil {
+			return "", err
+		}
+
+		input := &dynamodb.PutItemInput{
+			Item:      av,
+			TableName: aws.String(tableNameGame),
+		}
+
+		_, err = svc.PutItem(input)
+		if err != nil {
+			return "", err
+		}
 	}
 
 	// return "Successfully added item to table " + tableName + " with id " + id, nil
 	scanInput := &dynamodb.ScanInput{
-		TableName: aws.String(tableName),
+		TableName: aws.String(tableNameGame),
 	}
-	fmt.Println("a5")
 	result, err := svc.Scan(scanInput)
-	fmt.Println("a6")
 	if err != nil {
 		return "", err
 	}
 	for _, i := range result.Items {
-		fmt.Println("a7", i)
-		person := Person_DANGEROUS{}
+		game := Game{}
 
-		err = dynamodbattribute.UnmarshalMap(i, &person)
+		err = dynamodbattribute.UnmarshalMap(i, &game)
 
 		if err != nil {
 			return "", err
 		}
 
-		fmt.Println("Name: ", person.Name)
-		fmt.Println("Id:", person.Id)
-		fmt.Println("Score:", person.Score)
-		fmt.Println("AccessKey:", person.AccessKey)
-		fmt.Println()
+		return fmt.Sprintf("%s: %d", game.PersonId, game.Created), nil
 	}
 
 	return "", nil

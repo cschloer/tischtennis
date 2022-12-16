@@ -12,13 +12,12 @@ import (
 var VERSION = os.Getenv("VERSION")
 var BASE_PATH = os.Getenv("BASE_PATH")
 
-func Mul(param1 float64, param2 float64) string {
+func Mul(param1 float32, param2 float32) string {
 	return fmt.Sprintf("%.2f", param1*param2)
 }
 
 func BuildPage(path string, data interface{}) (*bytes.Buffer, error) {
 	var bodyBuffer bytes.Buffer
-	fmt.Println(1, data)
 	parsedFiles, err := template.New("").Funcs(template.FuncMap{
 		"mul": Mul,
 	}).ParseFiles(path, "templates/base.html")
@@ -26,11 +25,18 @@ func BuildPage(path string, data interface{}) (*bytes.Buffer, error) {
 		return &bodyBuffer, err
 	}
 	t := template.Must(parsedFiles, err)
-	fmt.Println(2)
 	err = t.ExecuteTemplate(&bodyBuffer, "base", data)
-	fmt.Println(3)
 	return &bodyBuffer, err
 }
+func ScoreSortPeople(people []database.Person) (scoreSortedPeople []database.Person) {
+	scoreSortedPeople = make([]database.Person, len(people))
+	copy(scoreSortedPeople, people)
+	sort.Slice(scoreSortedPeople, func(i, j int) bool {
+		return scoreSortedPeople[i].Score > scoreSortedPeople[j].Score
+	})
+	return scoreSortedPeople
+}
+
 func AlphSortPeople(people []database.Person) (alphSortedPeople []database.Person) {
 	alphSortedPeople = make([]database.Person, len(people))
 	copy(alphSortedPeople, people)

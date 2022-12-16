@@ -4,7 +4,6 @@ import (
 	"tischtennis/database"
 	"tischtennis/helpers"
 
-	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 )
@@ -26,23 +25,29 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	people, err := database.GetPeople()
 	if err != nil {
-
-		fmt.Println("ERR1", err)
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
 	}
 
 	var person database.Person
+	found := false
 	// TODO: is it faster to make a DDB request here?
 	for _, p := range people {
 		if p.Id == personId {
 			person = p
+			found = true
 			break
 		}
+	}
+	if !found {
+		return events.APIGatewayProxyResponse{
+			Headers:    map[string]string{"content-type": "text/html"},
+			Body:       "That person doesn't exist",
+			StatusCode: 404,
+		}, nil
 	}
 
 	games, err := database.GetGames([]database.Person{person}, false, 10)
 	if err != nil {
-		fmt.Println("ERR2", err)
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
 	}
 
@@ -58,13 +63,9 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	}
 
 	body, err := helpers.BuildPage("templates/person.html", data)
-	fmt.Println("AFTER")
 	if err != nil {
-		fmt.Println("ERR3", err)
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
 	}
-	fmt.Println("NO ERR")
-	fmt.Println(body.String())
 	//Returning response with AWS Lambda Proxy Response
 	return events.APIGatewayProxyResponse{
 		Headers:    map[string]string{"content-type": "text/html"},
