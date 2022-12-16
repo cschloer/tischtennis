@@ -16,11 +16,14 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	/* Auth */
 	fmt.Println("IN AUTH HANDELR")
 	err := helpers.CheckAccessKey(request, -1)
+	fmt.Println(2)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 401}, nil
 	}
 
+	fmt.Println(3)
 	res, err := database.AdminDatabase()
+	fmt.Println(4)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
 	}

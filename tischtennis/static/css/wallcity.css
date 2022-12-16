@@ -65,7 +65,7 @@
 }
 */
 
-.icon-button {
+.clickable {
   cursor: pointer;
 }
 
@@ -75,4 +75,26 @@
 
 .w-100 {
   width: 100%;
+}
+
+.has-bg-success-opaque {
+  background-color: #48c78e42;
+}
+.has-bg-danger-opaque {
+  background-color: #f1466840;
+}
+.has-bg-info-opaque {
+  background-color: #3e8ed017;
+}
+
+.admin-page-user-games-section {
+  display: none;
+}
+.admin-page-user-games-section.is-active {
+  display: block;
+}
+
+tr.is-selected .has-text-success:not(.icon),
+tr.is-selected .has-text-danger:not(.icon) {
+  color: white !important;
 }

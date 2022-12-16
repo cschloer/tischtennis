@@ -10,62 +10,39 @@ import (
 )
 
 type IndexPageData struct {
-	Version          string
-	BasePath         string
-	Title            string
-	People           []database.Person
-	AlphSortedPeople []database.Person
+	Version           string
+	BasePath          string
+	Title             string
+	ScoreSortedPeople []database.Person
+	AlphSortedPeople  []database.Person
 }
-
-/*
-var IndexTemplate = template.Must(
-	template.ParseFiles("templates/base.html"),
-)
-*/
 
 // Handler function Using AWS Lambda Proxy Request
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
-	//Get the path parameter that was sent
-	// name := request.PathParameters["name"]
-
-	//Generate message that want to be sent as body
-	// message := fmt.Sprintf(" { \"Message\" : \"Hello %s \" } ", name)
-
-	people := []database.Person{
-		database.Person{
-			Name:   "Lucas",
-			Id:     "adfa-adfadfa",
-			FaIcon: "fas fa-wave",
-			Wins:   5,
-			Losses: 12,
-			Score:  0.3573,
-		},
-		database.Person{
-			Name:   "Conrad",
-			Id:     "adfadf134-01",
-			FaIcon: "fas fa-wave",
-			Wins:   12,
-			Losses: 5,
-			Score:  0.6573,
-		},
+	people, err := database.GetPeople()
+	if err != nil {
+		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
 	}
 
+	fmt.Println("PEOPLE", people)
+	fmt.Println("ALPH SORT", helpers.AlphSortPeople(people))
 	data := IndexPageData{
-		Version:          helpers.VERSION,
-		BasePath:         helpers.BASE_PATH,
-		Title:            "Tischtennis",
-		People:           people,
-		AlphSortedPeople: helpers.AlphSortPeople(people),
+		Version:           helpers.VERSION,
+		BasePath:          helpers.BASE_PATH,
+		Title:             "Tischtennis",
+		ScoreSortedPeople: people,
+		AlphSortedPeople:  helpers.AlphSortPeople(people),
 	}
-	fmt.Println("BASE PATH", helpers.BASE_PATH)
 
-	// IndexTemplate.ExecuteTemplate(response, "base", data)
-
+	body, err := helpers.BuildPage("templates/index.html", data)
+	if err != nil {
+		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
+	}
 	//Returning response with AWS Lambda Proxy Response
 	return events.APIGatewayProxyResponse{
 		Headers:    map[string]string{"content-type": "text/html"},
-		Body:       helpers.BuildPage("templates/index.html", data).String(),
+		Body:       body.String(),
 		StatusCode: 200,
 	}, nil
 }

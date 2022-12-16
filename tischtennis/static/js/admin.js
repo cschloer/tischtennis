@@ -85,24 +85,28 @@ const deletePerson = async (personId) => {
   }
 };
 
-const deleteGame = async (gameId) => {
+const deleteGame = async (personId, created) => {
   const adminAccessKey = prompt("Please enter the admin access key");
   if (adminAccessKey) {
-    const button = $(`.game-delete-${gameId}`);
-    const loader = $(`.game-loader-${gameId}`);
+    const button = $(`.game-delete-${personId}-${created}`);
+    const loader = $(`.game-loader-${personId}-${created}`);
     const errorLine = $(".general-error-line");
     try {
       button.hide();
       loader.show();
       errorLine.hide();
       errorLine.html("");
-      const res = await fetch(`/admin/game/${gameId}`, {
+      const res = await fetch(`/admin/game`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
           [ACCESS_KEY_HEADER_KEY]: adminAccessKey,
         },
+        body: JSON.stringify({
+          personId,
+          created,
+        }),
       });
       await checkRes(res);
 
@@ -116,4 +120,5 @@ const deleteGame = async (gameId) => {
       loader.hide();
     }
   }
+  return false;
 };

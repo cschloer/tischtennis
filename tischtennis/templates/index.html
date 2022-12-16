@@ -17,7 +17,7 @@
             {{ .Title }}
           <h2>
       </div>
-      <div class="block mx-2">
+      <div class="block px-3">
         <table class="table mx-auto is-fullwidth">
           <thead>
             <tr>
@@ -35,19 +35,19 @@
             </tr>
           </thead>
           <tbody>
-            {{ range $index, $Person := .People }}
+            {{ range $index, $Person := .ScoreSortedPeople }}
               <tr>
                 <td>{{ len (printf "a%*s" $index "")}}</td>
-                {{ if (eq $Person.Score -1.0) }}
+                {{ if (eq .Score -1.0) }}
                   <td>
                       -
                   </td>
                 {{else}}
                   <td class="has-text-info">
-                    {{mul $Person.Score 1000.0}}
+                    {{mul .Score 1000.0}}
                   </td>
                 {{end}}
-                <td>{{ $Person.Name }}</td>
+                <td>{{ .Name }}</td>
                 <td>
                   <span class="has-text-success">{{ .Wins }}</span> -
                   <span class="has-text-danger">{{ .Losses }}</span>
@@ -66,23 +66,23 @@
                 Who are you?
               </h2>
             </div>
-            <div class="block">
+            <div class="block px-3">
               <table class="table is-fullwidth has-text-centered">
                 <tbody>
-                  {{ range $Person := .AlphSortedPeople }}
+                  {{ range .AlphSortedPeople }}
                     <tr>
                       <td>
-                        <a href="/person/{{ $Person.Id }}" class="is-size-4">
-                          {{ if $Person.FaIcon }}
-                            <i class="{{ $Person.FaIcon }} mr-2"></i>
+                        <a href="{{$.BasePath}}/person/{{ .Id }}" class="is-size-4">
+                          {{ if .FaIcon }}
+                            <i class="{{ .FaIcon }} mr-2"></i>
                           {{ end }}
-                          {{ $Person.Name }}
+                          {{ .Name }}
                         </a>
                       </td>
                     </tr>
                   {{ end }}
                   <tr><td>
-                  <a href="/admin" class="has-text-grey-light is-size-4">
+                      <a href="{{.BasePath}}/admin" class="has-text-grey-light is-size-4">
                     <i class="fas fa-user-cog mr-2"></i>
                     Admin
                   </a>

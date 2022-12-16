@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+{{ define "head" }}
+  <script src="{{.BasePath}}/static/js/admin.js"></script>
+{{ end }}
+{{ define "body" }}
+<div class="container mt-5">
+  <div class="columns">
+    <div class="column">
+      <div class="wall-city-logo-left">
+        <a href="{{.BasePath}}/">
+          <figure class="image">
+          <img src="https://drive.google.com/uc?export=view&id=1ZGJ9TijCBd34_3y9UNzqh6nRS_TjRlqO" />
+          </figure>
+        </a>
+      </div>
+    </div>
+    <div class="column">
+      <div class="notification is-danger general-error-line margin-top-1" style="display: none;"></div>
+      <div class="block">
+        <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">Users</h2>
+      </div>
+      <div class="block px-3">
+        <table class="table mx-auto is-fullwidth">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Score</th>
+              <th>Record</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range .AlphSortedPeople }}
+            <tr
+              class="clickable admin-page-user admin-page-user-{{.Id}}"
+              onclick="
+                $('.admin-page-user-games-section').removeClass('is-active') &&
+                $('.admin-page-user').removeClass('has-bg-info-opaque') &&
+                $('.admin-page-user-games-section-{{.Id}}').addClass('is-active') &&
+                $('.admin-page-user-{{.Id}}').addClass('has-bg-info-opaque')
+              "
+            >
+                <td>{{ .Id }}</td>
+                <td>{{ .Name }}</td>
+                <td>
+                  {{ if (eq .Score -1.0) }}
+                    -
+                  {{else}}
+                    {{mul .Score 1000.0}}
+                  {{end}}
+                </td>
+                <td>
+                  <span class="has-text-success">{{ .Wins }}</span> -
+                  <span class="has-text-danger">{{ .Losses }}</span>
+                </td>
+                <td class="has-text-centered">
+                  <span class="icon is-small has-text-danger clickable person-delete-{{.Id}}" onclick="deletePerson('{{ .Id }}')">
+                    <i class="fas fa-trash"></i>
+                  </span>
+                  <span class="icon is-small person-loader-{{.Id}}" style="display: none;">
+                    <i class="fas fa-spinner fa-pulse"></i>
+                  </span>
+                </td>
+              </tr>
+            {{ end }}
+          </tbody>
+        </table>
+      </div>
+      <hr />
+      <div class="block mx-2">
+        <div class="box create-person-box">
+          <div class="notification is-danger error-line margin-top-1" style="display: none;"></div>
+
+          <div class="field">
+            <p class="control has-icons-left has-icons-right">
+              <input class="input" name="name" placeholder="Name">
+              <span class="icon is-small is-left">
+                <i class="fas fa-user"></i>
+              </span>
+              <span class="icon is-right">
+                <i class="fas fa-check"></i>
+              </span>
+            </p>
+          </div>
+          <div class="field">
+            <p class="control has-icons-left">
+              <input class="input" type="text" name="fa_icon" placeholder="Font Awesome Icon (ex: 'fas fa-water')">
+              <span class="icon is-left">
+                <i class="fas fa-icons"></i>
+              </span>
+            </p>
+          </div>
+          <div class="field">
+            <p class="control has-icons-left">
+              <input class="input" type="text" name="person_access_key" placeholder="User Access Key">
+              <span class="icon is-left">
+                <i class="fas fa-lock"></i>
+              </span>
+            </p>
+          </div>
+          <hr />
+          <div class="field">
+            <p class="control has-icons-left">
+              <input class="input" type="password" name="admin_access_key" placeholder="Admin Access Key">
+              <span class="icon is-left">
+                <i class="fas fa-lock"></i>
+              </span>
+            </p>
+          </div>
+          <div class="field">
+            <p class="control">
+              <button class="button is-success">
+                Create New Person
+              </button>
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="column">
+      {{ range $personId, $Games := .GamesMap }}
+        <div class="admin-page-user-games-section-{{$personId}} admin-page-user-games-section">
+          <div class="block px-3">
+            <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">
+              {{ index $.PersonIdToNameMap $personId }} Games
+            </h2>
+          </div>
+          <div class="block">
+            <table class="table mx-auto is-fullwidth">
+              <thead>
+                <tr>
+                  <th>PersonId</th>
+                  <th>Reporter</th>
+                  <th>Opponent</th>
+                  <th>W</th>
+                  <th>L</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{ range . }}
+                  <tr>
+                    <td>{{ .PersonId }}</td>
+                    <td>{{ index $.PersonIdToNameMap .PersonId }}</td>
+                    <td>{{ index $.PersonIdToNameMap .OtherPersonId }}</td>
+                    <td>{{ .Wins }}</td>
+                    <td>{{ .Losses }}</td>
+                    <td class="has-text-centered">
+                      <span class="icon is-small has-text-danger icon-button game-delete-{{.PersonId}}-{{.Created}}" onclick="deleteGame('{{ .PersonId }}', {{ .Created }})">
+                        <i class="fas fa-trash"></i>
+                      </span>
+                      <span class="icon is-small game-loader-{{.PersonId}}-{{.Created}}" style="display: none;">
+                        <i class="fas fa-spinner fa-pulse"></i>
+                      </span>
+                    </td>
+                  </tr>
+                {{ end }}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      {{ end }}
+    </div>
+</div>
+
+  <script>
+    $('.admin-page-user-games-section-{{ (index .AlphSortedPeople 0).Id }}').addClass('is-active');
+    $('.admin-page-user-{{ (index .AlphSortedPeople 0).Id }}').addClass('has-bg-info-opaque');
+    setup();
+  </script>
+
+{{ end }}

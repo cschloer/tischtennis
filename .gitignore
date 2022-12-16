@@ -18,3 +18,4 @@ tischtennis/env.*.json
 tischtennis/node_modules
 tischtennis/tmp
 tischtennis/.serverless
+**/.dynamodb

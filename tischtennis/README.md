@@ -12,3 +12,15 @@ env.dev.json
   "ADD_FAKE_DATA": "true"
 }
 ```
+
+
+To run offline:
+```
+sudo ip addr show docker0
+```
+Get inet IP address from the above command, put into the code/database/database.go config for connecting to ddb
+
+Now run
+```
+sls offline start
+```

@@ -1,6 +1,9 @@
 service: tischtennis
 plugins:
   - serverless-aws-static-file-handler
+  - serverless-api-gateway-throttling
+  - serverless-dynamodb-local
+  - serverless-offline
 frameworkVersion: ">=2.24.0"
 
 provider:
@@ -15,6 +18,23 @@ provider:
         - dynamodb:*
       Resource: "arn:aws:dynamodb:${self:provider.region}:*:table/${opt:stage, 'dev'}_person"
 
+custom:
+  dynamodb:
+    stages:
+      - dev
+    start:
+      migrate: true
+      inMemory: true
+  serverless-offline:
+    useDocker: true
+    noTimeout: true
+    #host: 0.0.0.0
+    #dockerNetwork: host
+  # Configures throttling settings for the API Gateway stage
+  # They apply to all http endpoints, unless specifically overridden
+  apiGatewayThrottling:
+    maxRequestsPerSecond: 100
+    maxConcurrentRequests: 50
     
 package:
  individually: true
@@ -28,26 +48,37 @@ functions:
     package:
       include:
         - ./bin/indexBin
-        - ./templates/**
+        - ./templates/base.html
+        - ./templates/index.html
     events:
       - http:
           path: /
           method: get
-
-  getquery:
+  admin:
     runtime: go1.x
-    handler: bin/getQueryBin
+    handler: bin/adminBin
     package:
       include:
-        - ./bin/getQueryBin
+        - ./bin/adminBin
+        - ./templates/base.html
+        - ./templates/admin.html
     events:
       - http:
-          path: getQ
+          path: /admin
           method: get
-          request:
-            parameters:
-              querystrings:
-                name: true
+  person:
+    runtime: go1.x
+    handler: bin/personBin
+    package:
+      include:
+        - ./bin/personBin
+        - ./templates/base.html
+        - ./templates/person.html
+    events:
+      - http:
+          path: /person/{personId}
+          method: get
+
   admin_post:
     runtime: go1.x
     handler: bin/adminPostBin
@@ -60,7 +91,8 @@ functions:
           method: post
 
   static:
-    runtime: nodejs14.x
+    # TODO upgrade back to 14 when not using offline
+    runtime: nodejs12.x
     handler: static.staticHandler
     package:
       include:

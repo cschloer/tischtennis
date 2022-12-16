@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 {{ define "head" }}
-  <script src="/static/js/person.js"></script>
+  <script src="{{.BasePath}}/static/js/person.js"></script>
 {{ end }}
 {{ define "body" }}
 <div class="container mt-5">
   <div class="columns">
     <div class="column mx-2">
         
-      <a href="/" class="mb-2">
+      <a href="{{.BasePath}}/" class="mb-2">
         <figure class="image mx-6 is-4by3">
           <img src="https://drive.google.com/uc?export=view&id=1e8yxR_I01wzxfhcolG3aPMTbEmyqKIl0" />
         </figure>
@@ -30,7 +30,7 @@
       <div class="block">
         <h4 class="has-text-black has-text-weight-medium is-size-4 has-text-centered">Previously Reported Games</h4>
       </div>
-      <div class="block">
+      <div class="block px-3">
         <table class="table mx-auto">
           <thead>
             <tr>
@@ -44,37 +44,26 @@
             {{ range .Games }}
               <tr>
                 <td>
-                  {{ if eq .ReporterId $.Person.Id }} {{.OtherPersonName}}
-                  {{ else }} {{.ReporterName}}
-                  {{ end }}
+                  {{index $.PersonIdToNameMap .OtherPersonId}}
                 </td>
-                  {{ if eq .ReporterId $.Person.Id }}
-                    {{ if gt .Wins .Losses }}
-                      <td class="has-text-success">{{.Wins}}</td>
-                    {{ else }}
-                      {{ if gt .Losses .Wins }}
-                        <td class="has-text-danger">{{.Wins}}</td>
-                      {{ else }}
-                        <td>{{.Wins}}</td>
-                      {{ end }}
-                    {{ end }}
-                  {{ else }}
-                    {{ if gt .Losses .Wins }}
-                      <td class="has-text-danger">{{.Losses}}</td>
-                    {{ else }}
-                      {{ if gt .Wins .Losses }}
-                        <td class="has-text-danger">{{.Losses}}</td>
-                      {{ else }}
-                        <td>{{.Losses}}</td>
-                      {{ end }}
-                    {{ end }}
-                  {{ end }}
-                  {{ if eq .ReporterId $.Person.Id }}
-                    <td>{{.Losses}}</td>
+
+                {{ if gt .Wins .Losses }}
+                  <td class="has-text-success">{{.Wins}}</td>
+                {{ else }}
+                  {{ if gt .Losses .Wins }}
+                    <td class="has-text-danger">{{.Wins}}</td>
                   {{ else }}
                     <td>{{.Wins}}</td>
                   {{ end }}
-                <td class="has-text-grey">{{ .ReporterName }}</td>
+                {{ end }}
+
+                <td>{{.Losses}}</td>
+
+                <td class="has-text-grey">
+                  {{ if .Reporter }} {{$.Person.Name}}
+                  {{ else }} {{index $.PersonIdToNameMap .OtherPersonId}}
+                  {{ end }}
+                </td>
               </tr>
             {{ end }}
           </tbody>
@@ -103,7 +92,7 @@
                   <div class="select w-100">
                     <select class="w-100" name="other_person">
                       <option value="">Select an opponent</option>
-                      {{ range .People }}
+                      {{ range .AlphSortedPeople }}
                         {{ if ne .Id $.Person.Id }}
                         <option value="{{ .Id }}">{{ .Name }}</option>
                         {{ end }}
@@ -169,7 +158,7 @@
 </div>
 
   <script>
-    setup({{ .Person.Id }});
+    setup("{{ .Person.Id }}");
   </script>
 
 {{ end }}
