@@ -3,15 +3,19 @@
   <script src="{{.BasePath}}/static/js/person.js"></script>
 {{ end }}
 {{ define "body" }}
-<div class="container mt-5">
+<div class="container">
+  <figure class="wall-city-logo-vertical">
+    <a href="{{.BasePath}}/">
+      <img src="https://drive.google.com/uc?export=view&id=1ZGJ9TijCBd34_3y9UNzqh6nRS_TjRlqO" />
+    </a>
+  </figure>
+  <figure class="wall-city-logo-horizontal has-text-centered is-1by1">
+    <a href="{{.BasePath}}/">
+      <img src="https://drive.google.com/uc?export=view&id=1e8yxR_I01wzxfhcolG3aPMTbEmyqKIl0" />
+    </a>
+  </figure>
   <div class="columns is-multiline">
     <div class="column mx-2">
-        
-      <a href="{{.BasePath}}/" class="mb-2">
-        <figure class="image mx-6 is-4by3">
-          <img src="https://drive.google.com/uc?export=view&id=1e8yxR_I01wzxfhcolG3aPMTbEmyqKIl0" />
-        </figure>
-      </a>
       <div class="notification is-danger general-error-line margin-top-1" style="display: none;"></div>
       <div class="block box">
         <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">{{ .Person.Name }}</h2>
@@ -29,53 +33,6 @@
           <span>{{ .Person.NumReported }}</span> 
         </h4>
       </div>
-    </div>
-    <div class="column">
-      <div class="block">
-        <h4 class="has-text-black has-text-weight-medium is-size-4 has-text-centered">Previously Reported Games</h4>
-      </div>
-      <div class="block px-1">
-        <table class="table mx-auto">
-          <thead>
-            <tr>
-              <th>Against</th>
-              <th>Wins</th>
-              <th>Losses</th>
-              <th>Reported By</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{ range .Games }}
-              <tr>
-                <td>
-                  {{index $.PersonIdToNameMap .OtherPersonId}}
-                </td>
-
-                {{ if gt .Wins .Losses }}
-                  <td class="has-text-success">{{.Wins}}</td>
-                {{ else }}
-                  {{ if gt .Losses .Wins }}
-                    <td class="has-text-danger">{{.Wins}}</td>
-                  {{ else }}
-                    <td>{{.Wins}}</td>
-                  {{ end }}
-                {{ end }}
-
-                <td>{{.Losses}}</td>
-
-                <td class="has-text-grey">
-                  {{ if .Reporter }} {{$.Person.Name}}
-                  {{ else }} {{index $.PersonIdToNameMap .OtherPersonId}}
-                  {{ end }}
-                </td>
-              </tr>
-            {{ end }}
-          </tbody>
-        </table>
-      </div>
-
-    </div>
-    <div class="column mx-2">
       <div class="block">
         <div class="box report-game-box">
           <div class="notification is-danger error-line margin-top-1" style="display: none;"></div>
@@ -158,6 +115,56 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="column">
+      <div class="block">
+        <h4 class="has-text-black has-text-weight-medium is-size-4 has-text-centered">Previously Reported Games</h4>
+      </div>
+      <div class="block px-1">
+        <table class="table mx-auto is-fullwidth">
+          <thead>
+            <tr>
+              <th>Against</th>
+              <th>Wins</th>
+              <th>Losses</th>
+              <th>Date</th>
+              <th>Reported By</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range .Games }}
+              <tr>
+                <td>
+                  {{index $.PersonIdToNameMap .OtherPersonId}}
+                </td>
+
+                {{ if gt .Wins .Losses }}
+                  <td class="has-text-success">{{.Wins}}</td>
+                {{ else }}
+                  {{ if gt .Losses .Wins }}
+                    <td class="has-text-danger">{{.Wins}}</td>
+                  {{ else }}
+                    <td>{{.Wins}}</td>
+                  {{ end }}
+                {{ end }}
+
+                <td>{{.Losses}}</td>
+                <td>{{.Created}}</td>
+
+                <td class="has-text-grey">
+                  {{ if .Reporter }} {{$.Person.Name}}
+                  {{ else }} {{index $.PersonIdToNameMap .OtherPersonId}}
+                  {{ end }}
+                </td>
+              </tr>
+            {{ end }}
+          </tbody>
+        </table>
+        {{ if (eq (len .Games) 15) }}
+        <h6 class="has-text-centered has-text-grey is-size-6">- only the most recent 15 games are shown -</h6>
+        {{ end }}
+      </div>
+
     </div>
 </div>
 

@@ -10,60 +10,35 @@
   display: none;
 }
 */
-
-.wall-city-logo-center,
-.wall-city-logo-left,
-.wall-city-logo-right {
-  margin-left: auto;
-  margin-right: auto;
-  width: 5rem;
+.wall-city-logo-vertical {
+  position: fixed;
+  left: 0;
+  display: none;
+}
+.wall-city-logo-vertical img {
+  max-width: 5rem;
+}
+.wall-city-logo-horizontal img {
+  max-width: 25rem;
+  width: 100%;
 }
 
 @media (min-width: 769px) {
-  /*
-  .add-data-button {
-    margin-right: 1rem;
-    margin-top: auto;
-    margin-bottom: auto;
+  .container {
+    margin-top: 1.5rem !important;
   }
-  */
 
-  .wall-city-logo-left {
-    margin-left: 1rem;
+  .base-wrapper {
+    margin-left: 5rem;
+    margin-right: 5rem;
   }
-  .wall-city-logo-right {
-    margin-right: 1rem;
+  .wall-city-logo-vertical {
     display: inherit;
   }
-}
-
-/*
-@media (max-width: 768px) {
-  .add-data-button {
-    margin-right: 0.5rem;
-    margin-left: 0.5rem;
-  }
-  .add-data-button .dropdown-menu {
-    display: inherit;
-    text-align: center;
-  }
-  .add-data-button .dropdown-trigger .button {
+  .wall-city-logo-horizontal {
     display: none;
   }
-  .add-data-button .dropdown-mobile-header {
-    display: block;
-  }
-
-  .add-data-button,
-  .add-data-button .dropdown,
-  .add-data-button .dropdown-trigger,
-  .add-data-button .dropdown-trigger .button,
-  .add-data-button .dropdown-menu,
-  .add-data-button .dropdown-menu .dropdown-content {
-    width: 100%;
-  }
 }
-*/
 
 .clickable {
   cursor: pointer;

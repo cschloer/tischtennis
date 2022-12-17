@@ -145,7 +145,13 @@ func GetGames(people []Person, limit int) (gamesMap map[string][]Game, err error
 		if err != nil {
 			return gamesMap, err
 		}
-		games := make([]Game, len(result.Items))
+
+		numGames := limit
+		if numGames == -1 || len(result.Items) < numGames {
+			numGames = len(result.Items)
+		}
+		games := make([]Game, numGames)
+		counter := 0
 		for i, item := range result.Items {
 			game := Game{}
 
@@ -154,6 +160,11 @@ func GetGames(people []Person, limit int) (gamesMap map[string][]Game, err error
 				return gamesMap, err
 			}
 			games[i] = game
+			counter = counter + 1
+			if counter >= limit {
+				break
+
+			}
 		}
 		gamesMap[person.Id] = games
 	}
@@ -590,35 +601,57 @@ func AdminDatabase() (res string, err error) {
 	person3, _ := CreatePerson("dev_Christian", "fas fa-cat", "123")
 	_, _ = CreatePerson("dev_Ron", "", "123")
 
-	CreateGame(person1, person3, 1, 1)
-	CreateGame(person1, person3, 2, 2)
+	_, _, _, err = CreateGame(person1, person3, 1, 1)
+	if err != nil {
+		return person3, err
+	}
+	_, _, _, err = CreateGame(person1, person3, 2, 2)
+	if err != nil {
+		return person3, err
+	}
 	CreateGame(person1, person3, 3, 3)
 	CreateGame(person1, person3, 4, 4)
 	CreateGame(person1, person3, 5, 5)
 	CreateGame(person1, person3, 6, 6)
-	CreateGame(person2, person3, 7, 7)
-	CreateGame(person2, person3, 8, 8)
-	CreateGame(person2, person3, 9, 9)
-	CreateGame(person1, person3, 10, 10)
-	CreateGame(person2, person3, 11, 11)
-
-	scanInput := &dynamodb.ScanInput{
-		TableName: aws.String(_getTableName("score")),
-	}
-	result, err := svc.Scan(scanInput)
-	if err != nil {
-		return person3, err
-	}
-	for _, item := range result.Items {
-		score := Score{}
-
-		err = dynamodbattribute.UnmarshalMap(item, &score)
-
-		if err != nil {
-			return person3, err
-		}
-		fmt.Println("SCORE", score)
-	}
+	CreateGame(person2, person3, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person1, person3, 6, 6)
+	CreateGame(person2, person3, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person1, person3, 6, 6)
+	CreateGame(person2, person3, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person1, person3, 6, 6)
+	CreateGame(person2, person3, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person1, person3, 6, 6)
+	CreateGame(person2, person3, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person1, person3, 6, 6)
+	CreateGame(person2, person3, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
+	CreateGame(person3, person1, 6, 6)
 
 	return person3, err
 

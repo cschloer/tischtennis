@@ -46,7 +46,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, nil
 	}
 
-	gamesMap, err := database.GetGames([]database.Person{person}, 10)
+	gamesMap, err := database.GetGames([]database.Person{person}, 15)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
 	}

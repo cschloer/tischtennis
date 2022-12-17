@@ -3,17 +3,18 @@
   <script src="{{.BasePath}}/static/js/admin.js"></script>
 {{ end }}
 {{ define "body" }}
-<div class="container mt-5 is-fullhd">
+<div class="container is-fullhd">
+  <figure class="wall-city-logo-vertical">
+    <a href="{{.BasePath}}/">
+      <img src="https://drive.google.com/uc?export=view&id=1ZGJ9TijCBd34_3y9UNzqh6nRS_TjRlqO" />
+    </a>
+  </figure>
+  <figure class="wall-city-logo-horizontal has-text-centered">
+    <a href="{{.BasePath}}/">
+      <img src="https://drive.google.com/uc?export=view&id=1e8yxR_I01wzxfhcolG3aPMTbEmyqKIl0" />
+    </a>
+  </figure>
   <div class="columns is-multiline">
-    <div class="column">
-      <div class="wall-city-logo-left">
-        <a href="{{.BasePath}}/">
-          <figure class="image">
-          <img src="https://drive.google.com/uc?export=view&id=1ZGJ9TijCBd34_3y9UNzqh6nRS_TjRlqO" />
-          </figure>
-        </a>
-      </div>
-    </div>
     <div class="column">
       <div class="notification is-danger person-error-line margin-top-1" style="display: none;"></div>
       <div class="block">
@@ -183,6 +184,9 @@
                 {{ end }}
               </tbody>
             </table>
+            {{ if (eq (len .) 15) }}
+            <h6 class="has-text-centered has-text-grey is-size-6">- only the most recent 15 games are shown -</h6>
+            {{ end }}
           </div>
         </div>
       {{ end }}
