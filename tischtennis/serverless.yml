@@ -190,12 +190,12 @@ resources: # CloudFormation template syntax from here on.
       Properties:
         TableName: tischtennis_${opt:stage, 'dev'}_score
         AttributeDefinitions:
-          - AttributeName: MonthYear
+          - AttributeName: YearMonth
             AttributeType: S
           - AttributeName: Created
             AttributeType: N
         KeySchema:
-          - AttributeName: MonthYear
+          - AttributeName: YearMonth
             KeyType: HASH
           - AttributeName: Created
             KeyType: RANGE

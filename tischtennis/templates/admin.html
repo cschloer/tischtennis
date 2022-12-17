@@ -43,9 +43,9 @@
             >
                 <td>
                   {{ if .FaIcon }}
-                    <i class="{{ .FaIcon }} clickable" onclick="copyToClipboard('{{.Id}}') && false"></i>
+                    <i class="{{ .FaIcon }} clickable" onclick="return copyToClipboard('{{.Id}}')"></i>
                   {{ else }}
-                    <i class="fas fa-user clickable" onclick="copyToClipboard('{{.Id}}') && false"></i>
+                    <i class="fas fa-user clickable" onclick="return copyToClipboard('{{.Id}}')"></i>
                   {{ end }}
           
                 </td>
@@ -62,7 +62,7 @@
                   <span class="has-text-danger">{{ .Losses }}</span>
                 </td>
                 <td class="has-text-centered">
-                  <span class="icon is-small has-text-danger clickable person-delete-{{.Id}}" onclick="deletePerson('{{ .Id }}')">
+                  <span class="icon is-small has-text-danger clickable person-delete-{{.Id}}" onclick="return deletePerson('{{ .Id }}') && false">
                     <i class="fas fa-trash"></i>
                   </span>
                   <span class="icon is-small person-loader-{{.Id}}" style="display: none;">
@@ -171,7 +171,7 @@
                     <td class="has-text-centered">
                       <span
                         class="clickable icon is-small has-text-danger icon-button game-delete-{{.PersonId}}-{{.Created}}"
-                        onclick="deleteGame('{{ .PersonId }}', '{{ .Created }}')"
+                        onclick="return deleteGame('{{ .PersonId }}', '{{ .Created }}') && false"
                       >
                         <i class="fas fa-trash"></i>
                       </span>
