@@ -8,13 +8,12 @@ const setup = (reporterId) => {
       errorLine.hide();
       errorLine.html("");
 
-      const otherPersonIdStr = $(
+      const otherPersonId = $(
         '.report-game-box select[name="other_person"]'
       ).val();
-      if (!otherPersonIdStr) {
+      if (!otherPersonId) {
         throw new Error("Must have selected an opponent");
       }
-      const otherPersonId = parseInt(otherPersonIdStr);
       const winsStr = $('.report-game-box input[name="wins"]').val();
       const wins = parseInt(winsStr);
       const lossesStr = $('.report-game-box input[name="losses"]').val();
@@ -24,7 +23,7 @@ const setup = (reporterId) => {
       ).val();
       console.log(otherPersonId, wins, losses, personAccessKey);
 
-      const res = await fetch(`/game`, {
+      const res = await fetch(`${BASE_PATH}/game`, {
         method: "POST",
         headers: {
           Accept: "application/json",

@@ -9,6 +9,12 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
+type CreatePersonRequest struct {
+	Name      string `json:"name"`
+	FaIcon    string `json:"faIcon"`
+	AccessKey string `json:"accessKey"`
+}
+
 // Handler function Using AWS Lambda Proxy Request
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
@@ -18,27 +24,24 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 401}, nil
 	}
 
-	res, err := database.AdminDatabase()
+	bodyRequest := CreatePersonRequest{}
+
+	err = json.Unmarshal([]byte(request.Body), &bodyRequest)
+	if err != nil {
+		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 404}, nil
+	}
+	createdId, err := database.CreatePerson(
+		bodyRequest.Name,
+		bodyRequest.FaIcon,
+		bodyRequest.AccessKey,
+	)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
 	}
-	/*
-		err = database.CreateDatabase()
-		if err != nil {
-			http.Error(response, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		_, err = database.ComputeScores()
-		if err != nil {
-			http.Error(response, err.Error(), http.StatusBadRequest)
-			return
-		}
-	*/
 
 	var rs = map[string]interface{}{
 		"success": true,
-		"message": res,
+		"id":      createdId,
 	}
 
 	response, err := json.Marshal(rs)

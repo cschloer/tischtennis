@@ -7,3 +7,16 @@ const checkRes = async (res) => {
   }
   return true;
 };
+
+const copyToClipboard = (val) => {
+  console.log("INSIDE COPY TO CLIPBOARD");
+  var dummy = document.createElement("input");
+  dummy.style.display = "none";
+  document.body.appendChild(dummy);
+
+  dummy.setAttribute("id", "dummy_id");
+  document.getElementById("dummy_id").value = val;
+  dummy.select();
+  document.execCommand("copy");
+  document.body.removeChild(dummy);
+};

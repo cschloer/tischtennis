@@ -46,7 +46,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		}, nil
 	}
 
-	games, err := database.GetGames([]database.Person{person}, false, 10)
+	gamesMap, err := database.GetGames([]database.Person{person}, 10)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
 	}
@@ -58,7 +58,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		BasePath:          helpers.BASE_PATH,
 		Person:            person,
 		AlphSortedPeople:  helpers.AlphSortPeople(people),
-		Games:             games[person.Id],
+		Games:             gamesMap[person.Id],
 		PersonIdToNameMap: personIdToNameMap,
 	}
 

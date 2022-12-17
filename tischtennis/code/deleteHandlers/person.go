@@ -9,6 +9,10 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
+type DeletePersonRequest struct {
+	PersonId string `json:"personId"`
+}
+
 // Handler function Using AWS Lambda Proxy Request
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
@@ -18,27 +22,23 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 401}, nil
 	}
 
-	res, err := database.AdminDatabase()
+	bodyRequest := DeletePersonRequest{}
+
+	err = json.Unmarshal([]byte(request.Body), &bodyRequest)
+	if err != nil {
+		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 404}, nil
+	}
+
+	deletedId, err := database.DeletePerson(
+		bodyRequest.PersonId,
+	)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
 	}
-	/*
-		err = database.CreateDatabase()
-		if err != nil {
-			http.Error(response, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		_, err = database.ComputeScores()
-		if err != nil {
-			http.Error(response, err.Error(), http.StatusBadRequest)
-			return
-		}
-	*/
 
 	var rs = map[string]interface{}{
 		"success": true,
-		"message": res,
+		"id":      deletedId,
 	}
 
 	response, err := json.Marshal(rs)

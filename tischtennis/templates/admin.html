@@ -3,8 +3,8 @@
   <script src="{{.BasePath}}/static/js/admin.js"></script>
 {{ end }}
 {{ define "body" }}
-<div class="container mt-5">
-  <div class="columns">
+<div class="container mt-5 is-fullhd">
+  <div class="columns is-multiline">
     <div class="column">
       <div class="wall-city-logo-left">
         <a href="{{.BasePath}}/">
@@ -15,7 +15,7 @@
       </div>
     </div>
     <div class="column">
-      <div class="notification is-danger general-error-line margin-top-1" style="display: none;"></div>
+      <div class="notification is-danger person-error-line margin-top-1" style="display: none;"></div>
       <div class="block">
         <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">Users</h2>
       </div>
@@ -41,7 +41,14 @@
                 $('.admin-page-user-{{.Id}}').addClass('has-bg-info-opaque')
               "
             >
-                <td>{{ .Id }}</td>
+                <td>
+                  {{ if .FaIcon }}
+                    <i class="{{ .FaIcon }} clickable" onclick="copyToClipboard('{{.Id}}') && false"></i>
+                  {{ else }}
+                    <i class="fas fa-user clickable" onclick="copyToClipboard('{{.Id}}') && false"></i>
+                  {{ end }}
+          
+                </td>
                 <td>{{ .Name }}</td>
                 <td>
                   {{ if (eq .Score -1.0) }}
@@ -120,35 +127,52 @@
       </div>
     </div>
     <div class="column">
+      <div class="notification is-danger game-error-line margin-top-1" style="display: none;"></div>
       {{ range $personId, $Games := .GamesMap }}
         <div class="admin-page-user-games-section-{{$personId}} admin-page-user-games-section">
           <div class="block px-3">
             <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">
-              {{ index $.PersonIdToNameMap $personId }} Games
+              <a href="{{$.BasePath}}/person/{{$personId}}">{{ index $.PersonIdToNameMap $personId }}</a> Games
             </h2>
           </div>
           <div class="block">
             <table class="table mx-auto is-fullwidth">
               <thead>
                 <tr>
-                  <th>PersonId</th>
-                  <th>Reporter</th>
                   <th>Opponent</th>
                   <th>W</th>
                   <th>L</th>
+                  <th>Reporter</th>
                   <th>Action</th>
                 </tr>
               </thead>
               <tbody>
                 {{ range . }}
                   <tr>
-                    <td>{{ .PersonId }}</td>
-                    <td>{{ index $.PersonIdToNameMap .PersonId }}</td>
                     <td>{{ index $.PersonIdToNameMap .OtherPersonId }}</td>
-                    <td>{{ .Wins }}</td>
+                    {{ if gt .Wins .Losses }}
+                      <td class="has-text-success">{{.Wins}}</td>
+                    {{ else }}
+                      {{ if gt .Losses .Wins }}
+                        <td class="has-text-danger">{{.Wins}}</td>
+                      {{ else }}
+                        <td>{{.Wins}}</td>
+                      {{ end }}
+                    {{ end }}
+
                     <td>{{ .Losses }}</td>
+                    <td class="has-text-grey">
+                      {{ if .Reporter }}
+                        {{ index $.PersonIdToNameMap .PersonId }}
+                      {{ else }}
+                        {{ index $.PersonIdToNameMap .OtherPersonId }}
+                      {{ end}}
+                    </td>
                     <td class="has-text-centered">
-                      <span class="icon is-small has-text-danger icon-button game-delete-{{.PersonId}}-{{.Created}}" onclick="deleteGame('{{ .PersonId }}', {{ .Created }})">
+                      <span
+                        class="clickable icon is-small has-text-danger icon-button game-delete-{{.PersonId}}-{{.Created}}"
+                        onclick="deleteGame('{{ .PersonId }}', '{{ .Created }}')"
+                      >
                         <i class="fas fa-trash"></i>
                       </span>
                       <span class="icon is-small game-loader-{{.PersonId}}-{{.Created}}" style="display: none;">
@@ -166,8 +190,10 @@
 </div>
 
   <script>
-    $('.admin-page-user-games-section-{{ (index .AlphSortedPeople 0).Id }}').addClass('is-active');
-    $('.admin-page-user-{{ (index .AlphSortedPeople 0).Id }}').addClass('has-bg-info-opaque');
+    {{ if .AlphSortedPeople }}
+      $('.admin-page-user-games-section-{{ (index .AlphSortedPeople 0).Id }}').addClass('is-active');
+      $('.admin-page-user-{{ (index .AlphSortedPeople 0).Id }}').addClass('has-bg-info-opaque');
+    {{ end }}
     setup();
   </script>
 

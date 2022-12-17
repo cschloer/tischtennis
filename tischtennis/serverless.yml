@@ -89,7 +89,47 @@ functions:
       - http:
           path: /admin
           method: post
+  person_post:
+    runtime: go1.x
+    handler: bin/personPostBin
+    package:
+      include:
+        - ./bin/personPostBin
+    events:
+      - http:
+          path: /person
+          method: post
+  game_post:
+    runtime: go1.x
+    handler: bin/gamePostBin
+    package:
+      include:
+        - ./bin/gamePostBin
+    events:
+      - http:
+          path: /game
+          method: post
 
+  person_delete:
+    runtime: go1.x
+    handler: bin/personDeleteBin
+    package:
+      include:
+        - ./bin/personDeleteBin
+    events:
+      - http:
+          path: /person
+          method: delete
+  game_delete:
+    runtime: go1.x
+    handler: bin/gameDeleteBin
+    package:
+      include:
+        - ./bin/gameDeleteBin
+    events:
+      - http:
+          path: /game
+          method: delete
   static:
     # TODO upgrade back to 14 when not using offline
     runtime: nodejs12.x
@@ -137,6 +177,25 @@ resources: # CloudFormation template syntax from here on.
             AttributeType: N
         KeySchema:
           - AttributeName: PersonId
+            KeyType: HASH
+          - AttributeName: Created
+            KeyType: RANGE
+
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+    ScoreTable:
+      Type: AWS::DynamoDB::Table
+      DeletionPolicy: Retain
+      Properties:
+        TableName: tischtennis_${opt:stage, 'dev'}_score
+        AttributeDefinitions:
+          - AttributeName: MonthYear
+            AttributeType: S
+          - AttributeName: Created
+            AttributeType: N
+        KeySchema:
+          - AttributeName: MonthYear
             KeyType: HASH
           - AttributeName: Created
             KeyType: RANGE

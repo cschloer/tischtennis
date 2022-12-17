@@ -10,7 +10,7 @@ import (
 var ACCESS_KEY_HEADER_KEY = "X-Wall-City-Access-Key"
 var MASTER_ACCESS_KEY = os.Getenv("MASTER_ACCESS_KEY")
 
-func CheckAccessKey(request events.APIGatewayProxyRequest, personId int) (err error) {
+func CheckAccessKey(request events.APIGatewayProxyRequest, personId string) (err error) {
 	accessKey := ""
 	for key, value := range request.Headers {
 		if key == ACCESS_KEY_HEADER_KEY {
@@ -22,7 +22,7 @@ func CheckAccessKey(request events.APIGatewayProxyRequest, personId int) (err er
 	if accessKey == MASTER_ACCESS_KEY {
 		return nil
 	}
-	if personId >= 0 {
+	if personId != "" {
 		personAccessKey, err := database.GetPersonAccessKey(personId)
 		if err != nil {
 			return err

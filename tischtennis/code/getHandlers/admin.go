@@ -12,7 +12,6 @@ type AdminPageData struct {
 	Version           string
 	BasePath          string
 	AlphSortedPeople  []database.Person
-	Games             []database.Game
 	GamesMap          map[string][]database.Game
 	PersonIdToNameMap map[string]string
 }
@@ -24,7 +23,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
 	}
 
-	games, err := database.GetGames(people, false, 10)
+	gamesMap, err := database.GetGames(people, 10)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
 	}
@@ -37,8 +36,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		Version:           helpers.VERSION,
 		BasePath:          helpers.BASE_PATH,
 		AlphSortedPeople:  helpers.AlphSortPeople(people),
-		Games:             []database.Game{},
-		GamesMap:          games,
+		GamesMap:          gamesMap,
 		PersonIdToNameMap: personIdToNameMap,
 	}
 

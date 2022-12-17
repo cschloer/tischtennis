@@ -25,7 +25,7 @@ const setup = () => {
         '.create-person-box input[name="admin_access_key"]'
       ).val();
 
-      const res = await fetch(`/admin/person`, {
+      const res = await fetch(`${BASE_PATH}/person`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -57,19 +57,22 @@ const deletePerson = async (personId) => {
   if (adminAccessKey) {
     const button = $(`.person-delete-${personId}`);
     const loader = $(`.person-loader-${personId}`);
-    const errorLine = $(".general-error-line");
+    const errorLine = $(".person-error-line");
     try {
       button.hide();
       loader.show();
       errorLine.hide();
       errorLine.html("");
-      const res = await fetch(`/admin/person/${personId}`, {
+      const res = await fetch(`${BASE_PATH}/person/`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
           [ACCESS_KEY_HEADER_KEY]: adminAccessKey,
         },
+        body: JSON.stringify({
+          personId,
+        }),
       });
       await checkRes(res);
 
@@ -90,13 +93,13 @@ const deleteGame = async (personId, created) => {
   if (adminAccessKey) {
     const button = $(`.game-delete-${personId}-${created}`);
     const loader = $(`.game-loader-${personId}-${created}`);
-    const errorLine = $(".general-error-line");
+    const errorLine = $(".game-error-line");
     try {
       button.hide();
       loader.show();
       errorLine.hide();
       errorLine.html("");
-      const res = await fetch(`/admin/game`, {
+      const res = await fetch(`${BASE_PATH}/game`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",

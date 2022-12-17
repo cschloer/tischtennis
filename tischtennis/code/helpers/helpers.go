@@ -12,7 +12,7 @@ import (
 var VERSION = os.Getenv("VERSION")
 var BASE_PATH = os.Getenv("BASE_PATH")
 
-func Mul(param1 float32, param2 float32) string {
+func Mul(param1 float64, param2 float64) string {
 	return fmt.Sprintf("%.2f", param1*param2)
 }
 

@@ -4,7 +4,7 @@
 {{ end }}
 {{ define "body" }}
 <div class="container mt-5">
-  <div class="columns">
+  <div class="columns is-multiline">
     <div class="column mx-2">
         
       <a href="{{.BasePath}}/" class="mb-2">
@@ -18,19 +18,23 @@
         <h4 class="has-text-info is-size-4 has-text-centered">
           <span class="has-text-grey">Score: </span>
           {{ if (eq .Person.Score -1.0) }} n/a - play a game! {{ else }}{{ mul .Person.Score 1000.0 }}{{ end }}
-        </h2>
+        </h4>
         <h4 class="is-size-4 has-text-centered">
           <span class="has-text-grey">Record: </span>
           <span class="has-text-success">{{ .Person.Wins }}</span> - 
           <span class="has-text-danger">{{ .Person.Losses }}</span>
-        </h2>
+        </h4>
+        <h4 class="is-size-4 has-text-centered">
+          <span class="has-text-grey">Self Reported Games: </span>
+          <span>{{ .Person.NumReported }}</span> 
+        </h4>
       </div>
     </div>
     <div class="column">
       <div class="block">
         <h4 class="has-text-black has-text-weight-medium is-size-4 has-text-centered">Previously Reported Games</h4>
       </div>
-      <div class="block px-3">
+      <div class="block px-1">
         <table class="table mx-auto">
           <thead>
             <tr>

@@ -9,36 +9,43 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 )
 
+type CreateGameRequest struct {
+	ReporterId    string `json:"reporterId"`
+	OtherPersonId string `json:"otherPersonId"`
+	Wins          int32  `json:"wins"`
+	Losses        int32  `json:"losses"`
+}
+
 // Handler function Using AWS Lambda Proxy Request
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
+	bodyRequest := CreateGameRequest{}
+
+	err := json.Unmarshal([]byte(request.Body), &bodyRequest)
+	if err != nil {
+		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 404}, nil
+	}
 	/* Auth */
-	err := helpers.CheckAccessKey(request, "")
+	err = helpers.CheckAccessKey(request, bodyRequest.ReporterId)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 401}, nil
 	}
 
-	res, err := database.AdminDatabase()
+	createdId1, createdId2, created, err := database.CreateGame(
+		bodyRequest.ReporterId,
+		bodyRequest.OtherPersonId,
+		bodyRequest.Wins,
+		bodyRequest.Losses,
+	)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
 	}
-	/*
-		err = database.CreateDatabase()
-		if err != nil {
-			http.Error(response, err.Error(), http.StatusInternalServerError)
-			return
-		}
-
-		_, err = database.ComputeScores()
-		if err != nil {
-			http.Error(response, err.Error(), http.StatusBadRequest)
-			return
-		}
-	*/
 
 	var rs = map[string]interface{}{
 		"success": true,
-		"message": res,
+		"id1":     createdId1,
+		"id2":     createdId2,
+		"created": created,
 	}
 
 	response, err := json.Marshal(rs)
