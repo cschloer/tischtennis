@@ -17,7 +17,7 @@
   <div class="columns is-multiline">
     <div class="column mx-2 w-100">
       <div class="notification is-danger general-error-line margin-top-1" style="display: none;"></div>
-      <div class="block box">
+      <div class="block">
         <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">{{ .Person.Name }}</h2>
         <h4 class="has-text-info is-size-4 has-text-centered">
           <span class="has-text-grey">Score: </span>
@@ -34,15 +34,71 @@
         </h4>
       </div>
       <div class="block">
+        <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">
+          Previously reported games
+          
+        </h2>
+      </div>
+      <div class="block px-1">
+        <table class="table mx-auto is-fullwidth is-size-5">
+          <thead>
+            <tr>
+              <th>Against</th>
+              <th>Wins</th>
+              <th>Losses</th>
+              <th>Date</th>
+              <th>Reported By</th>
+            </tr>
+          </thead>
+          <tbody>
+            {{ range .Games }}
+              <tr>
+                <td>
+                  {{index $.PersonIdToNameMap .OtherPersonId}}
+                </td>
+
+                {{ if gt .Wins .Losses }}
+                  <td class="has-text-success">{{.Wins}}</td>
+                {{ else }}
+                  {{ if gt .Losses .Wins }}
+                    <td class="has-text-danger">{{.Wins}}</td>
+                  {{ else }}
+                    <td>{{.Wins}}</td>
+                  {{ end }}
+                {{ end }}
+
+                <td>{{.Losses}}</td>
+                <td>
+                  <script>document.write(new Date({{.Created}} / 1000).toLocaleDateString())</script>
+                </td>
+
+                <td class="has-text-grey">
+                  {{ if .Reporter }} {{$.Person.Name}}
+                  {{ else }} {{index $.PersonIdToNameMap .OtherPersonId}}
+                  {{ end }}
+                </td>
+              </tr>
+            {{ end }}
+          </tbody>
+        </table>
+        {{ if (eq (len .Games) 15) }}
+        <h6 class="has-text-centered has-text-grey is-size-6">- only the most recent 15 games are shown -</h6>
+        {{ end }}
+      </div>
+
+    </div>
+    <div class="column">
+      <div class="block">
+        <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">
+          <span class="icon mr-2">
+            <i class="fas fa-table-tennis"></i>
+          </span>
+          Report a new game
+        </h2>
+      </div>
+      <div class="block">
         <div class="box report-game-box">
           <div class="notification is-danger error-line margin-top-1" style="display: none;"></div>
-          <h4 class="has-text-black has-text-weight-medium is-size-4 has-text-centered mb-2">
-            <span class="icon mr-1">
-              <i class="fas fa-table-tennis"></i>
-            </span>
-            Report a new game
-          </h2>
-
           <div class="field is-horizontal">
             <div class="field-label is-normal">
               <label class="label">Against</label>
@@ -115,58 +171,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="column">
-      <div class="block">
-        <h4 class="has-text-black has-text-weight-medium is-size-4 has-text-centered">Previously Reported Games</h4>
-      </div>
-      <div class="block px-1">
-        <table class="table mx-auto is-fullwidth">
-          <thead>
-            <tr>
-              <th>Against</th>
-              <th>Wins</th>
-              <th>Losses</th>
-              <th>Date</th>
-              <th>Reported By</th>
-            </tr>
-          </thead>
-          <tbody>
-            {{ range .Games }}
-              <tr>
-                <td>
-                  {{index $.PersonIdToNameMap .OtherPersonId}}
-                </td>
-
-                {{ if gt .Wins .Losses }}
-                  <td class="has-text-success">{{.Wins}}</td>
-                {{ else }}
-                  {{ if gt .Losses .Wins }}
-                    <td class="has-text-danger">{{.Wins}}</td>
-                  {{ else }}
-                    <td>{{.Wins}}</td>
-                  {{ end }}
-                {{ end }}
-
-                <td>{{.Losses}}</td>
-                <td>
-                  <script>document.write(new Date({{.Created}} / 1000).toLocaleDateString())</script>
-                </td>
-
-                <td class="has-text-grey">
-                  {{ if .Reporter }} {{$.Person.Name}}
-                  {{ else }} {{index $.PersonIdToNameMap .OtherPersonId}}
-                  {{ end }}
-                </td>
-              </tr>
-            {{ end }}
-          </tbody>
-        </table>
-        {{ if (eq (len .Games) 15) }}
-        <h6 class="has-text-centered has-text-grey is-size-6">- only the most recent 15 games are shown -</h6>
-        {{ end }}
-      </div>
-
     </div>
 </div>
 

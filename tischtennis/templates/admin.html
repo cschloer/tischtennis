@@ -21,7 +21,7 @@
         <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">Users</h2>
       </div>
       <div class="block px-3">
-        <table class="table mx-auto is-fullwidth">
+        <table class="table mx-auto is-fullwidth is-size-5">
           <thead>
             <tr>
               <th>ID</th>
@@ -62,7 +62,7 @@
                   <span class="has-text-success">{{ .Wins }}</span> -
                   <span class="has-text-danger">{{ .Losses }}</span>
                 </td>
-                <td class="has-text-centered">
+                <td >
                   <span class="icon is-small has-text-danger clickable person-delete-{{.Id}}" onclick="return deletePerson('{{ .Id }}') && false">
                     <i class="fas fa-trash"></i>
                   </span>
@@ -72,64 +72,36 @@
                 </td>
               </tr>
             {{ end }}
+            <tr
+              class="clickable admin-page-user admin-page-user-create-user has-text-grey"
+              onclick="
+                $('.admin-page-user-games-section').removeClass('is-active') &&
+                $('.admin-page-user').removeClass('has-bg-info-opaque') &&
+                $('.admin-page-user-games-section-create-user').addClass('is-active') &&
+                $('.admin-page-user-create-user').addClass('has-bg-info-opaque')
+              "
+            >
+              <td>
+                <i class="fas fa-user"></i>
+              </td>
+              <td>
+                New Person
+              </td>
+              <td>-</td>
+              <td>-</td>
+              <td>
+                <span class="icon is-small" >
+                  <i class="fas fa-plus"></i>
+                </span>
+              </td>
+            </tr>
           </tbody>
         </table>
-      </div>
-      <hr />
-      <div class="block mx-2">
-        <div class="box create-person-box">
-          <div class="notification is-danger error-line margin-top-1" style="display: none;"></div>
-
-          <div class="field">
-            <p class="control has-icons-left has-icons-right">
-              <input class="input" name="name" placeholder="Name">
-              <span class="icon is-small is-left">
-                <i class="fas fa-user"></i>
-              </span>
-              <span class="icon is-right">
-                <i class="fas fa-check"></i>
-              </span>
-            </p>
-          </div>
-          <div class="field">
-            <p class="control has-icons-left">
-              <input class="input" type="text" name="fa_icon" placeholder="Font Awesome Icon (ex: 'fas fa-water')">
-              <span class="icon is-left">
-                <i class="fas fa-icons"></i>
-              </span>
-            </p>
-          </div>
-          <div class="field">
-            <p class="control has-icons-left">
-              <input class="input" type="text" name="person_access_key" placeholder="User Access Key">
-              <span class="icon is-left">
-                <i class="fas fa-lock"></i>
-              </span>
-            </p>
-          </div>
-          <hr />
-          <div class="field">
-            <p class="control has-icons-left">
-              <input class="input" type="password" name="admin_access_key" placeholder="Admin Access Key">
-              <span class="icon is-left">
-                <i class="fas fa-lock"></i>
-              </span>
-            </p>
-          </div>
-          <div class="field">
-            <p class="control">
-              <button class="button is-success">
-                Create New Person
-              </button>
-            </p>
-          </div>
-        </div>
-
       </div>
     </div>
     <div class="column">
       <div class="notification is-danger game-error-line margin-top-1" style="display: none;"></div>
-      {{ range $personId, $Games := .GamesMap }}
+        {{ range $personId, $Games := .GamesMap }}
         <div class="admin-page-user-games-section-{{$personId}} admin-page-user-games-section">
           <div class="block px-3">
             <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">
@@ -137,7 +109,7 @@
             </h2>
           </div>
           <div class="block">
-            <table class="table mx-auto is-fullwidth">
+            <table class="table mx-auto is-fullwidth is-size-5">
               <thead>
                 <tr>
                   <th>Opponent</th>
@@ -193,14 +165,97 @@
             {{ end }}
           </div>
         </div>
-      {{ end }}
+        {{ end }}
+        <div class="admin-page-user-games-section-create-user admin-page-user-games-section">
+          <div class="block px-3">
+            <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">
+                <span class="icon mr-2">
+                  <i class="fas fa-user"></i>
+                </span>
+                Create a new person
+            </h2>
+          </div>
+          <div class="block mx-2">
+            <div class="create-person-box">
+              <div class="notification is-danger error-line margin-top-1" style="display: none;"></div>
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label">Name</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control has-icons-left has-icons-right">
+                      <input class="input" name="name" placeholder="Conrad">
+                      <span class="icon is-small is-left">
+                        <i class="fas fa-user"></i>
+                      </span>
+                      <span class="icon is-right">
+                        <i class="fas fa-check"></i>
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label">FA Icon</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control has-icons-left">
+                      <input class="input" type="text" name="fa_icon" placeholder="fas fa-water">
+                      <span class="icon is-left">
+                        <i class="fas fa-icons"></i>
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label">Key</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <p class="control has-icons-left">
+                      <input class="input" type="text" name="person_access_key" placeholder="123456789">
+                      <span class="icon is-left">
+                        <i class="fas fa-lock"></i>
+                      </span>
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <hr />
+              <div class="field">
+                <p class="control has-icons-left">
+                  <input class="input" type="password" name="admin_access_key" placeholder="Admin Access Key">
+                  <span class="icon is-left">
+                    <i class="fas fa-lock"></i>
+                  </span>
+                </p>
+              </div>
+              <div class="field">
+                <p class="control has-text-centered">
+                  <button class="button is-success w-100">
+                    Create New Person
+                  </button>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
 </div>
 
   <script>
     {{ if .AlphSortedPeople }}
       $('.admin-page-user-games-section-{{ (index .AlphSortedPeople 0).Id }}').addClass('is-active');
-      $('.admin-page-user-{{ (index .AlphSortedPeople 0).Id }}').addClass('has-bg-info-opaque');
+      $('.admin-page-user-{{ (index .AlphSortedPeople 0).Id }}').addClass('has-bg-info-opaque');  
+    {{ else }}
+      $('.admin-page-user-games-section-create-user').addClass('is-active');
+      $('.admin-page-user-create-user').addClass('has-bg-info-opaque');  
     {{ end }}
     setup();
   </script>
