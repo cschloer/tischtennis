@@ -11,6 +11,7 @@ import (
 
 var VERSION = os.Getenv("VERSION")
 var BASE_PATH = os.Getenv("BASE_PATH")
+var STATIC_ASSETS_URL = os.Getenv("STATIC_ASSETS_URL")
 
 func Mul(param1 float64, param2 float64) string {
 	return fmt.Sprintf("%.2f", param1*param2)

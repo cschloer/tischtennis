@@ -4,22 +4,20 @@
 {{ define "body" }}
 <div class="container">
   <figure class="wall-city-logo-vertical">
-    <img src="https://drive.google.com/uc?export=view&id=1ZGJ9TijCBd34_3y9UNzqh6nRS_TjRlqO" />
+    <img src="{{.StaticAssetsUrl}}/static/assets/WallCityLogo_Vertical_White2.png" />
   </figure>
   <figure class="wall-city-logo-horizontal has-text-centered is-1by1">
-    <img src="https://drive.google.com/uc?export=view&id=1e8yxR_I01wzxfhcolG3aPMTbEmyqKIl0" />
+    <img src="{{.StaticAssetsUrl}}/static/assets/WallCityLogo_Horizontal_White2.png" />
   </figure>
-  <div class="columns is-multiline">
-    <div class="column is-one-third">
-    </div>
-    <div class="column is-one-third">
+  <div class="columns">
+    <div class="column">
       <div class="block">
           <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">
             {{ .Title }}
           <h2>
       </div>
       <div class="block px-1">
-        <table class="table mx-auto is-fullwidth">
+        <table class="table mx-auto is-size-5">
           <thead>
             <tr>
               <th>#</th>
@@ -76,6 +74,8 @@
                         <a href="{{$.BasePath}}/person/{{ .Id }}" class="is-size-4">
                           {{ if .FaIcon }}
                             <i class="{{ .FaIcon }} mr-2"></i>
+                          {{ else }}
+                            <i class="fas fa-user mr-2"></i>
                           {{ end }}
                           {{ .Name }}
                         </a>
@@ -117,8 +117,6 @@
           )
         </script>
       </div>
-    </div>
-    <div class="column is-one-third">
     </div>
 </div>
 <!-- /container -->

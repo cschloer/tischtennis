@@ -7,20 +7,18 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <link rel="icon" href="https://drive.google.com/uc?export=view&id=1ppxPH3k90JkLJvyz3MuaAcopQSPtpxFh" />
+    <link rel="icon" href="{{.StaticAssetsUrl}}/static/assets/favicon.ico" />
 
     <title>Wall City Tischtennis</title>
 
 
-    <link
-      href="{{.BasePath}}/static/external/fontawesome-free-5.12.0-web/css/all.css"
-      rel="stylesheet"
-    />
-    <link href="{{.BasePath}}/static/css/wallcity.css?version={{ .Version }}" rel="stylesheet" />
-    <link href="{{.BasePath}}/static/external/bulma.css" rel="stylesheet" />
-    <link href="{{.BasePath}}/static/external/bulma-tooltip.min.css" rel="stylesheet" />
-    <script src="{{.BasePath}}/static/external/jquery/jquery-3.4.1.min.js"></script>
-    <script src="{{.BasePath}}/static/js/base.js"></script>
+    <script src="https://kit.fontawesome.com/779125478c.js" crossorigin="anonymous"></script>
+
+    <link href="{{.StaticAssetsUrl}}/static/css/wallcity.css?version={{ .Version }}" rel="stylesheet" />
+    <link href="{{.StaticAssetsUrl}}/static/external/bulma.css" rel="stylesheet" />
+    <link href="{{.StaticAssetsUrl}}/static/external/bulma-tooltip.min.css" rel="stylesheet" />
+    <script src="{{.StaticAssetsUrl}}/static/external/jquery/jquery-3.4.1.min.js"></script>
+    <script src="{{.StaticAssetsUrl}}/static/js/base.js"></script>
     {{template "head" .}}
   </head>
   <body >

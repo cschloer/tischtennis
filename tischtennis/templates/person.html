@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 {{ define "head" }}
-  <script src="{{.BasePath}}/static/js/person.js"></script>
+  <script src="{{.StaticAssetsUrl}}/static/js/person.js"></script>
 {{ end }}
 {{ define "body" }}
 <div class="container">
   <figure class="wall-city-logo-vertical">
     <a href="{{.BasePath}}/">
-      <img src="https://drive.google.com/uc?export=view&id=1ZGJ9TijCBd34_3y9UNzqh6nRS_TjRlqO" />
+      <img src="{{.StaticAssetsUrl}}/static/assets/WallCityLogo_Vertical_White2.png" />
     </a>
   </figure>
   <figure class="wall-city-logo-horizontal has-text-centered is-1by1">
     <a href="{{.BasePath}}/">
-      <img src="https://drive.google.com/uc?export=view&id=1e8yxR_I01wzxfhcolG3aPMTbEmyqKIl0" />
+      <img src="{{.StaticAssetsUrl}}/static/assets/WallCityLogo_Horizontal_White2.png" />
     </a>
   </figure>
   <div class="columns is-multiline">
@@ -149,7 +149,9 @@
                 {{ end }}
 
                 <td>{{.Losses}}</td>
-                <td>{{.Created}}</td>
+                <td>
+                  <script>document.write(new Date({{.Created}} / 1000).toLocaleDateString())</script>
+                </td>
 
                 <td class="has-text-grey">
                   {{ if .Reporter }} {{$.Person.Name}}

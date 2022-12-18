@@ -11,6 +11,7 @@ import (
 type PersonPageData struct {
 	Version           string
 	BasePath          string
+	StaticAssetsUrl   string
 	Person            database.Person
 	AlphSortedPeople  []database.Person
 	Games             []database.Game
@@ -56,6 +57,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	data := PersonPageData{
 		Version:           helpers.VERSION,
 		BasePath:          helpers.BASE_PATH,
+		StaticAssetsUrl:   helpers.STATIC_ASSETS_URL,
 		Person:            person,
 		AlphSortedPeople:  helpers.AlphSortPeople(people),
 		Games:             gamesMap[person.Id],

@@ -1,6 +1,7 @@
 {
   "dependencies": {
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "serverless-finch": "^4.0.0"
   },
   "devDependencies": {
     "serverless-api-gateway-throttling": "^2.0.2",

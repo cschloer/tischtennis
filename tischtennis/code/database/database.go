@@ -52,29 +52,36 @@ type Person_DANGEROUS struct {
 	AccessKey   string
 }
 
-// Initialize a session that the SDK will use to load
-// credentials from the shared credentials file ~/.aws/credentials
-// and region from the shared configuration file ~/.aws/config.
-var sess = session.Must(session.NewSessionWithOptions(session.Options{
-	//SharedConfigState: session.SharedConfigEnable,
-	Config: *aws.NewConfig().
-		WithRegion("us-east-1").
-		WithCredentials(credentials.NewStaticCredentials("DEFAULT_ACCESS_KEY", "DEFAULT_SECRET", "")).
-		//WithEndpoint("http://0.0.0.0:8000"),
-		WithEndpoint("http://172.17.0.1:8000"),
-}))
+var ENVIRONMENT = os.Getenv("ENVIRONMENT")
+
+func _getSession() (sess *session.Session) {
+	if ENVIRONMENT == "local" {
+		sess = session.Must(session.NewSessionWithOptions(session.Options{
+			Config: *aws.NewConfig().
+				WithRegion("us-east-1").
+				WithCredentials(credentials.NewStaticCredentials("DEFAULT_ACCESS_KEY", "DEFAULT_SECRET", "")).
+				WithEndpoint("http://172.17.0.1:8000"),
+		}))
+	} else {
+		sess = session.Must(session.NewSessionWithOptions(session.Options{
+			SharedConfigState: session.SharedConfigEnable,
+		}))
+
+	}
+	return sess
+}
+
+var sess = _getSession()
 
 // Create DynamoDB client
 var svc = dynamodb.New(sess)
-
-var ENVIRONMENT = os.Getenv("ENVIRONMENT")
 
 func _createId() string {
 	return xid.New().String()
 }
 func _getNow() (int64, time.Time) {
 	timeObj := time.Now()
-	return timeObj.UnixNano(), timeObj
+	return timeObj.UnixMicro(), timeObj
 }
 
 func _getTableName(table string) string {
@@ -596,62 +603,20 @@ func DeleteGame(personId string, created int64) (personId1 string, personId2 str
 	return personId, game.OtherPersonId, created, nil
 }
 func AdminDatabase() (res string, err error) {
-	person1, _ := CreatePerson("dev_Lucas", "fas fa-chess-knight", "123")
-	person2, _ := CreatePerson("dev_Conrad", "fas fa-water", "123")
-	person3, _ := CreatePerson("dev_Christian", "fas fa-cat", "123")
-	_, _ = CreatePerson("dev_Ron", "", "123")
+	person1, _ := CreatePerson("Lucas", "fas fa-chess-knight", "123")
+	person2, _ := CreatePerson("Conrad", "fas fa-water", "123")
+	person3, _ := CreatePerson("Christian", "fas fa-cat", "123")
+	CreatePerson("Ron", "", "123")
+	CreatePerson("Phil", "", "123")
+	CreatePerson("Vlad", "", "123")
 
-	_, _, _, err = CreateGame(person1, person3, 1, 1)
-	if err != nil {
-		return person3, err
-	}
-	_, _, _, err = CreateGame(person1, person3, 2, 2)
-	if err != nil {
-		return person3, err
-	}
-	CreateGame(person1, person3, 3, 3)
-	CreateGame(person1, person3, 4, 4)
-	CreateGame(person1, person3, 5, 5)
-	CreateGame(person1, person3, 6, 6)
+	CreateGame(person1, person2, 4, 0)
+	CreateGame(person3, person2, 6, 8)
+	CreateGame(person1, person3, 12, 4)
+	CreateGame(person1, person2, 6, 8)
+	CreateGame(person2, person3, 2, 7)
+	CreateGame(person1, person3, 4, 6)
 	CreateGame(person2, person3, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person1, person3, 6, 6)
-	CreateGame(person2, person3, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person1, person3, 6, 6)
-	CreateGame(person2, person3, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person1, person3, 6, 6)
-	CreateGame(person2, person3, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person1, person3, 6, 6)
-	CreateGame(person2, person3, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person1, person3, 6, 6)
-	CreateGame(person2, person3, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
-	CreateGame(person3, person1, 6, 6)
 
 	return person3, err
 

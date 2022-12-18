@@ -1,6 +1,6 @@
 # tischtennis_serverless
 
 TODO:
-- convert date number to date string
+- host static on s3
 - create an edit person functionality
 - paginate where necessary
