@@ -140,22 +140,6 @@ functions:
       - http:
           path: /game
           method: delete
-#  static:
-#    # TODO upgrade back to 14 when not using offline
-#    runtime: nodejs12.x
-#    handler: static.staticHandler
-#    package:
-#      include:
-#        - ./static.js
-#        - ./static/**
-#        - ./node_modules/serverless-aws-static-file-handler/**
-#        - ./node_modules/mime-db/**
-#        - ./node_modules/mime-types/**
-#        - ./node_modules/mustache/**
-#    events:
-#      - http:
-#          path: static/{pathvar+}
-#          method: get
 
 resources: # CloudFormation template syntax from here on.
   Resources:

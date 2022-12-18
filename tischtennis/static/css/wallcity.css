@@ -1,15 +1,9 @@
-/*
-.add-data-button {
-  margin-left: auto;
-  margin-right: auto;
-  margin-top: 1rem;
-  width: fit-content;
+.columns {
+  max-width: 100vw;
 }
-
-.add-data-button .dropdown-mobile-header {
-  display: none;
+.block {
+  overflow-x: auto;
 }
-*/
 .wall-city-logo-vertical {
   position: fixed;
   left: 0;
@@ -73,15 +67,3 @@ tr.is-selected .has-text-success:not(.icon),
 tr.is-selected .has-text-danger:not(.icon) {
   color: white !important;
 }
-
-/*
-.column {
-  min-width: fit-content;
-}
-
-@media (min-width: 769px) {
-  .column .notification {
-    max-width: 448px;
-  }
-}
-*/
