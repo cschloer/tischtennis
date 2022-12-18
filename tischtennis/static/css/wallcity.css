@@ -70,3 +70,8 @@ tr.is-selected .has-text-success:not(.icon),
 tr.is-selected .has-text-danger:not(.icon) {
   color: white !important;
 }
+
+.report-game-box,
+.create-person-box {
+  min-width: 350px;
+}
