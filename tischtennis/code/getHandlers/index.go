@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"tischtennis/database"
 	"tischtennis/helpers"
 
@@ -26,7 +25,6 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil
 	}
 
-	fmt.Println("PEOPLE", people)
 	data := IndexPageData{
 		Version:           helpers.VERSION,
 		BasePath:          helpers.BASE_PATH,

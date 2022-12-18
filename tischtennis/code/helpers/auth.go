@@ -2,7 +2,6 @@ package helpers
 
 import (
 	"errors"
-	"fmt"
 	"github.com/aws/aws-lambda-go/events"
 	"os"
 	"strings"
@@ -15,7 +14,6 @@ var MASTER_ACCESS_KEY = os.Getenv("MASTER_ACCESS_KEY")
 func CheckAccessKey(request events.APIGatewayProxyRequest, personId string) (err error) {
 	accessKey := ""
 	for key, value := range request.Headers {
-		fmt.Println("key: '", key, "', access_key_header: '", ACCESS_KEY_HEADER_KEY, "'")
 		if strings.ToLower(key) == ACCESS_KEY_HEADER_KEY {
 			accessKey = value
 			break
@@ -25,7 +23,6 @@ func CheckAccessKey(request events.APIGatewayProxyRequest, personId string) (err
 	if accessKey == MASTER_ACCESS_KEY {
 		return nil
 	}
-	fmt.Println(accessKey, " -- ", MASTER_ACCESS_KEY, " :!!:::")
 	if personId != "" {
 		personAccessKey, err := database.GetPersonAccessKey(personId)
 		if err != nil {

@@ -1,8 +1,11 @@
-.columns {
+.container .columns {
+  margin-right: 0rem;
+  margin-left: 0rem;
   max-width: 100vw;
 }
 .block {
   overflow-x: auto;
+  overflow-y: clip;
 }
 .wall-city-logo-vertical {
   position: fixed;

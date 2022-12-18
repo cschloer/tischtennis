@@ -18,16 +18,19 @@ To run offline:
 ```
 sudo ip addr show docker0
 ```
-Get inet IP address from the above command, put into the code/database/database.go config for connecting to ddb
+Get inet IP address from the above command, put into your env.local.json to connect to ddb
 
 Now run
 ```
-sls offline start
+sudo sls offline start --stage local
 ```
 
 To sync s3 files:
 ```
-serverless client deploy
+# Deploy files to s3
+sls client deploy
+# Invalidate the cloudfront cache
+sls cloudfrontInvalidate
 ```
 
 To sync s3 files locally:

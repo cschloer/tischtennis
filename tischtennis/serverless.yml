@@ -5,6 +5,7 @@ plugins:
   - serverless-api-gateway-throttling
   - serverless-dynamodb-local
   - serverless-offline
+  - serverless-cloudfront-invalidate
 frameworkVersion: ">=2.24.0"
 
 provider:
@@ -23,6 +24,11 @@ provider:
         - "arn:aws:dynamodb:${self:provider.region}:*:table/tischtennis_${opt:stage, 'dev'}_score"
 
 custom:
+  cloudfrontInvalidate:
+    - distributionId: "EXGNK3BW58NB0"
+      autoInvalidate: false
+      items:
+        - "/*"
   s3Bucket: tischtennis-${opt:stage, 'dev'}-static
   client:
     bucketName: ${self:custom.s3Bucket}
@@ -30,10 +36,10 @@ custom:
     keyPrefix: static
   dynamodb:
     stages:
-      - dev
+      - local
     start:
       migrate: true
-      inMemory: true
+      inMemory: false
   serverless-offline:
     useDocker: true
     noTimeout: true
@@ -246,8 +252,9 @@ resources: # CloudFormation template syntax from here on.
             CloudFrontDefaultCertificate: 'true'
   ## In order to print out the hosted domain via `serverless info` we need to define the DomainName output for CloudFormation 
   Outputs:
-    WebAppCloudFrontDistributionOutput:
+    CDNDistributionId:
+      Description: CDN distribution id.
       Value:
-        'Fn::GetAtt': [ WebAppCloudFrontDistribution, DomainName ]
+        Ref: WebAppCloudFrontDistribution
 
 

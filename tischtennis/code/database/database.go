@@ -56,11 +56,14 @@ var ENVIRONMENT = os.Getenv("ENVIRONMENT")
 
 func _getSession() (sess *session.Session) {
 	if ENVIRONMENT == "local" {
+		if os.Getenv("LOCAL_DDB_HOST") == "" {
+			panic("LOCAL_DDB_HOST not set in local mode")
+		}
 		sess = session.Must(session.NewSessionWithOptions(session.Options{
 			Config: *aws.NewConfig().
 				WithRegion("us-east-1").
 				WithCredentials(credentials.NewStaticCredentials("DEFAULT_ACCESS_KEY", "DEFAULT_SECRET", "")).
-				WithEndpoint("http://172.17.0.1:8000"),
+				WithEndpoint(os.Getenv("LOCAL_DDB_HOST")),
 		}))
 	} else {
 		sess = session.Must(session.NewSessionWithOptions(session.Options{
@@ -168,7 +171,7 @@ func GetGames(people []Person, limit int) (gamesMap map[string][]Game, err error
 			}
 			games[i] = game
 			counter = counter + 1
-			if counter >= limit {
+			if limit != -1 && counter >= limit {
 				break
 
 			}
