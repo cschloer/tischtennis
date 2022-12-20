@@ -5,12 +5,12 @@
 {{ define "body" }}
 <div class="container is-fullhd">
   <figure class="wall-city-logo-vertical">
-    <a href="{{.BasePath}}/">
+    <a href="../">
       <img src="{{.StaticAssetsUrl}}/static/assets/WallCityLogo_Vertical_White2.png" />
     </a>
   </figure>
   <figure class="wall-city-logo-horizontal has-text-centered">
-    <a href="{{.BasePath}}/">
+    <a href="../">
       <img src="{{.StaticAssetsUrl}}/static/assets/WallCityLogo_Horizontal_White2.png" />
     </a>
   </figure>
@@ -103,7 +103,7 @@
         <div class="admin-page-user-games-section-{{$personId}} admin-page-user-games-section">
           <div class="block px-3">
             <h2 class="has-text-black has-text-weight-medium is-size-2 has-text-centered">
-              <a href="{{$.BasePath}}/person/{{$personId}}">{{ index $.PersonIdToNameMap $personId }}</a> Games
+              <a href="../person/{{$personId}}">{{ index $.PersonIdToNameMap $personId }}</a> Games
             </h2>
           </div>
           <div class="block">

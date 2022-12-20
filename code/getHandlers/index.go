@@ -10,7 +10,6 @@ import (
 
 type IndexPageData struct {
 	Version           string
-	BasePath          string
 	StaticAssetsUrl   string
 	Title             string
 	ScoreSortedPeople []database.Person
@@ -27,7 +26,6 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	data := IndexPageData{
 		Version:           helpers.VERSION,
-		BasePath:          helpers.BASE_PATH,
 		StaticAssetsUrl:   helpers.STATIC_ASSETS_URL,
 		Title:             "Tischtennis",
 		ScoreSortedPeople: helpers.ScoreSortPeople(people),

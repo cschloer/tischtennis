@@ -23,7 +23,7 @@ const setup = (reporterId) => {
       ).val();
       console.log(otherPersonId, wins, losses, personAccessKey);
 
-      const res = await fetch(`${BASE_PATH}/game`, {
+      const res = await fetch(`../game`, {
         method: "POST",
         headers: {
           Accept: "application/json",

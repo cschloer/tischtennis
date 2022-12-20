@@ -10,7 +10,6 @@ import (
 
 type AdminPageData struct {
 	Version           string
-	BasePath          string
 	StaticAssetsUrl   string
 	AlphSortedPeople  []database.Person
 	GamesMap          map[string][]database.Game
@@ -35,7 +34,6 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 
 	data := AdminPageData{
 		Version:           helpers.VERSION,
-		BasePath:          helpers.BASE_PATH,
 		StaticAssetsUrl:   helpers.STATIC_ASSETS_URL,
 		AlphSortedPeople:  helpers.AlphSortPeople(people),
 		GamesMap:          gamesMap,
