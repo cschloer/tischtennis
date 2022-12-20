@@ -25,7 +25,7 @@ const setup = () => {
         '.create-person-box input[name="admin_access_key"]'
       ).val();
 
-      const res = await fetch(`../person`, {
+      const res = await fetch(`./person`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -63,7 +63,7 @@ const deletePerson = async (personId) => {
       loader.show();
       errorLine.hide();
       errorLine.html("");
-      const res = await fetch(`$../person/`, {
+      const res = await fetch(`./person/`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
@@ -99,7 +99,7 @@ const deleteGame = async (personId, created) => {
       loader.show();
       errorLine.hide();
       errorLine.html("");
-      const res = await fetch(`../game`, {
+      const res = await fetch(`./game`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",

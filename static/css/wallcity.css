@@ -60,10 +60,10 @@
 }
 
 .admin-page-user-games-section {
-  display: none;
+  display: none !important;
 }
 .admin-page-user-games-section.is-active {
-  display: block;
+  display: block !important;
 }
 
 tr.is-selected .has-text-success:not(.icon),
