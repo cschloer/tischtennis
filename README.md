@@ -5,7 +5,12 @@ TODO:
 
 Tischtennis on serverless
 
-Binary static files are hosted on google drive and the link is directly placed into the html since I wasn't able to get binary static files to work
+To deploy fresh, you'll have to do two deployments.
+1. Deploy (first running `sls client deploy`)
+2. Get the static cloudfront url and put it in the env JSON, deploy again
+
+Also, you have to manually add a custom domain name to the API gateway that is created here.
+
 
 env.dev.json
 ```

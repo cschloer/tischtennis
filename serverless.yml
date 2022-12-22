@@ -1,7 +1,6 @@
 service: tischtennis
 plugins:
   - serverless-finch
-  #- serverless-aws-static-file-handler
   - serverless-api-gateway-throttling
   - serverless-dynamodb-local
   - serverless-offline
@@ -25,7 +24,7 @@ provider:
 
 custom:
   cloudfrontInvalidate:
-    - distributionId: "EXGNK3BW58NB0"
+    - distributionId: ${file(env.${opt:stage, 'dev'}.json):CLOUDFRONT_DIST_ID}
       autoInvalidate: false
       items:
         - "/*"
@@ -66,7 +65,7 @@ functions:
         - ./templates/base.html
         - ./templates/index.html
     events:
-      - http:
+      - httpApi:
           path: /
           method: get
   admin:
@@ -78,7 +77,7 @@ functions:
         - ./templates/base.html
         - ./templates/admin.html
     events:
-      - http:
+      - httpApi:
           path: /admin
           method: get
   person:
@@ -90,7 +89,7 @@ functions:
         - ./templates/base.html
         - ./templates/person.html
     events:
-      - http:
+      - httpApi:
           path: /person/{personId}
           method: get
 
@@ -102,7 +101,7 @@ functions:
       include:
         - ./bin/adminPostBin
     events:
-      - http:
+      - httpApi:
           path: /admin
           method: post
   person_post:
@@ -112,7 +111,7 @@ functions:
       include:
         - ./bin/personPostBin
     events:
-      - http:
+      - httpApi:
           path: /person
           method: post
   game_post:
@@ -122,7 +121,7 @@ functions:
       include:
         - ./bin/gamePostBin
     events:
-      - http:
+      - httpApi:
           path: /game
           method: post
 
@@ -133,7 +132,7 @@ functions:
       include:
         - ./bin/personDeleteBin
     events:
-      - http:
+      - httpApi:
           path: /person
           method: delete
   game_delete:
@@ -143,7 +142,7 @@ functions:
       include:
         - ./bin/gameDeleteBin
     events:
-      - http:
+      - httpApi:
           path: /game
           method: delete
 
@@ -220,8 +219,9 @@ resources: # CloudFormation template syntax from here on.
               #   OriginAccessIdentity: origin-access-identity/cloudfront/E127EXAMPLE51Z
           Enabled: 'true'
           ## Uncomment the following section in case you are using a custom domain
-          # Aliases:
-          # - mysite.example.com
+          #Aliases:
+            #- "*.wallcity.de"
+            #  - ${file(env.${opt:stage, 'dev'}.json):STAGE_URL}
           DefaultRootObject: index.html
           ## Since the Single Page App is taking care of the routing we need to make sure ever path is served with index.html
           ## The only exception are files that actually exist e.h. app.js, reset.css
@@ -250,6 +250,11 @@ resources: # CloudFormation template syntax from here on.
           ## The certificate to use when viewers use HTTPS to request objects.
           ViewerCertificate:
             CloudFrontDefaultCertificate: 'true'
+
+            #AcmCertificateArn: arn:aws:acm:us-east-1:751535399218:certificate/ec5e9706-0ac5-42d7-9e7a-409f5683e06d
+            #SslSupportMethod: sni-only
+            #MinimumProtocolVersion: TLSv1
+
   ## In order to print out the hosted domain via `serverless info` we need to define the DomainName output for CloudFormation 
   Outputs:
     CDNDistributionId:
