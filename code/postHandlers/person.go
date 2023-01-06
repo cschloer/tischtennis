@@ -10,9 +10,9 @@ import (
 )
 
 type CreatePersonRequest struct {
-	Name      string `json:"name"`
-	FaIcon    string `json:"faIcon"`
-	AccessKey string `json:"accessKey"`
+	Name            string `json:"name"`
+	FaIcon          string `json:"faIcon"`
+	PersonAccessKey string `json:"personAccessKey"`
 }
 
 // Handler function Using AWS Lambda Proxy Request
@@ -33,7 +33,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 	createdId, err := database.CreatePerson(
 		bodyRequest.Name,
 		bodyRequest.FaIcon,
-		bodyRequest.AccessKey,
+		bodyRequest.PersonAccessKey,
 	)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 500}, nil

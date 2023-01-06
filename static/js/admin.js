@@ -63,7 +63,7 @@ const deletePerson = async (personId) => {
       loader.show();
       errorLine.hide();
       errorLine.html("");
-      const res = await fetch(`./person/`, {
+      const res = await fetch(`./person`, {
         method: "DELETE",
         headers: {
           Accept: "application/json",
