@@ -40,15 +40,35 @@
               <tr>
                 <td>{{ len (printf "a%*s" $index "")}}</td>
                 {{ if (eq .Score -1.0) }}
+                    {{ if (or (gt .Wins 0) (gt  .Losses 0) ) }}
+                  <td
+                    class="has-tooltip-multiline"
+                    data-tooltip="A player has to play at least 5 games against a total of 3 unique opponents before their record is counted."
+                  >
+                    ?
+                  </td>
+                    {{ else }}
                   <td>
                       -
                   </td>
+                    {{ end }}
                 {{else}}
                   <td class="has-text-info">
                     {{mul .Score 1000.0}}
                   </td>
                 {{end}}
-                <td>{{ .Name }}</td>
+                <td>
+                  <a href="./person/{{ .Id }}">
+                    {{ if (ne .Score -1.0)  }}
+                      {{ if (eq $index 0) }}
+                          <i class="fas fa-crown mr-2" style="color: #ecbc36;"></i>
+                      {{ else if (eq .Wins .Losses) }}
+                          <i class="fas fa-scale-balanced mr-2" style="color: black;"></i>
+                      {{ end }}
+                    {{ end }}
+                    {{ .Name }}
+                  </a>
+                </td>
                 <td>
                   <span class="has-text-success">{{ .Wins }}</span> -
                   <span class="has-text-danger">{{ .Losses }}</span>

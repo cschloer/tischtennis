@@ -26,7 +26,7 @@ func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyRespo
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 404}, nil
 	}
 	/* Auth */
-	err = helpers.CheckAccessKey(request, bodyRequest.ReporterId)
+	err = helpers.CheckAccessKey(request, bodyRequest.ReporterId, true)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 401}, nil
 	}

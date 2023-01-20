@@ -25,11 +25,33 @@ func ComputeScores() (insertedId string, err error) {
 	invalidPeople := make([]Person, 0)
 	// People with at least 1 win
 	validPeople := make([]Person, 0)
-	for _, p := range people {
-		if p.Wins+p.Losses > 0 {
-			validPeople = append(validPeople, p)
+	peopleGamesMap := map[string]map[string][]Game{}
+	for _, person := range people {
+		gamesMap, err := GetGames([]Person{person}, -1)
+		if err != nil {
+			return insertedId, err
+		}
+		peopleGamesMap[person.Id] = gamesMap
+
+		// Ensure that valid players have at least 9 games played against 3 unique opponents
+		opponents := map[string]bool{}
+		numGames := person.Wins + person.Losses
+		valid := false
+		if numGames >= 5 {
+			for _, game := range gamesMap[person.Id] {
+				if _, ok := opponents[game.OtherPersonId]; !ok {
+					opponents[game.OtherPersonId] = true
+				}
+				if len(opponents) >= 3 {
+					valid = true
+					break
+				}
+			}
+		}
+		if valid {
+			validPeople = append(validPeople, person)
 		} else {
-			invalidPeople = append(invalidPeople, p)
+			invalidPeople = append(invalidPeople, person)
 		}
 	}
 
@@ -44,17 +66,13 @@ func ComputeScores() (insertedId string, err error) {
 		for i, p := range validPeople {
 			col := make([]float64, len(validPeople))
 			for j := range col {
-				if j == i {
-					// No games played against yourself
-					col[j] = 0
-				} else {
-					// We artifically give everyone 0.1 win against eachother
-					// to prevent issues with undefeated players forcing everyone to 0
-					col[j] = 0.1
-				}
+				col[j] = 0
 			}
 			recordMatrix[i] = col
 			personIdMap[p.Id] = i
+		}
+		for _, p := range invalidPeople {
+			personIdMap[p.Id] = -1
 		}
 
 		if err != nil {
@@ -62,29 +80,42 @@ func ComputeScores() (insertedId string, err error) {
 		}
 
 		for _, person := range validPeople {
-			gamesMap, err := GetGames([]Person{person}, -1)
-			if err != nil {
-				return insertedId, err
+			p1Index, ok := personIdMap[person.Id]
+			if !ok {
+				continue
 			}
+			gamesMap := peopleGamesMap[person.Id]
 			for _, game := range gamesMap[person.Id] {
-				p1Index, ok1 := personIdMap[game.PersonId]
-				p2Index, ok2 := personIdMap[game.OtherPersonId]
-				if ok1 && ok2 {
+				if game.PersonId != person.Id {
+					return insertedId, errors.New("Looking at a game that we shouldn't be")
+
+				}
+				p2Index, ok := personIdMap[game.OtherPersonId]
+				if ok && p2Index != -1 {
 					// Fill up the record matrix with wins only for the current person
-					recordMatrix[p1Index][p2Index] = recordMatrix[p1Index][p2Index] + float64(game.Wins)
+					recordMatrix[p1Index][p2Index] = recordMatrix[p1Index][p2Index] + float64(game.Wins) - float64(game.Losses)/2
+				}
+			}
+			for _, otherPerson := range validPeople {
+				p2Index, ok := personIdMap[otherPerson.Id]
+				// Square root the totals to ensure # games isn't taken too significantly into account
+				if ok {
+					curValue := recordMatrix[p1Index][p2Index]
+					if curValue <= 0 {
+						recordMatrix[p1Index][p2Index] = 0.1
+					} else {
+						recordMatrix[p1Index][p2Index] = math.Sqrt(curValue)
+					}
 				}
 			}
 		}
 
-		// Create a record matrix that is weighted by number of games played
+		// Create a record matrix
 		data := make([]float64, len(validPeople)*len(validPeople))
-		for i, p := range validPeople {
-			totalGames := p.Wins + p.Losses
+		for i, _ := range validPeople {
 			for j, _ := range validPeople {
 				index := i*len(validPeople) + j
-				// We divide by total games + len(validPeople) because we've artifically added 1 win
-				// against everyone in order to prevent undefeated players from setting everyone to 0
-				data[index] = recordMatrix[i][j] / float64(totalGames+int32(len(validPeople)))
+				data[index] = recordMatrix[i][j]
 			}
 		}
 
@@ -101,7 +132,7 @@ func ComputeScores() (insertedId string, err error) {
 		largestEigenvalue := real(eigenvalues[0])
 		largestEigenvalueIndex := 0
 		for i, _ := range validPeople {
-			realValue := real(eigenvalues[1])
+			realValue := real(eigenvalues[i])
 			if realValue > largestEigenvalue {
 				largestEigenvalue = realValue
 				largestEigenvalueIndex = i

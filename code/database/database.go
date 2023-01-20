@@ -606,20 +606,31 @@ func DeleteGame(personId string, created int64) (personId1 string, personId2 str
 	return personId, game.OtherPersonId, created, nil
 }
 func AdminDatabase() (res string, err error) {
-	person1, _ := CreatePerson("Lucas", "fas fa-chess-knight", "123")
+	person1, _ := CreatePerson("David", "fas fa-chess-knight", "123")
 	person2, _ := CreatePerson("Conrad", "fas fa-water", "123")
-	person3, _ := CreatePerson("Christian", "fas fa-cat", "123")
-	CreatePerson("Ron", "", "123")
-	CreatePerson("Phil", "", "123")
-	CreatePerson("Vlad", "", "123")
+	person3, _ := CreatePerson("Soenke", "fas fa-cat", "123")
+	person4, _ := CreatePerson("Leo", "", "123")
+	person5, _ := CreatePerson("Ron", "", "123")
+	person6, _ := CreatePerson("Phil", "", "123")
+	person7, _ := CreatePerson("Vlad", "", "123")
+	_, _ = CreatePerson("Lucas", "", "123")
 
-	CreateGame(person1, person2, 4, 0)
-	CreateGame(person3, person2, 6, 8)
-	CreateGame(person1, person3, 12, 4)
-	CreateGame(person1, person2, 6, 8)
-	CreateGame(person2, person3, 2, 7)
-	CreateGame(person1, person3, 4, 6)
-	CreateGame(person2, person3, 6, 6)
+	CreateGame(person1, person2, 4, 6)
+	CreateGame(person2, person5, 0, 3)
+	CreateGame(person2, person3, 2, 0)
+	CreateGame(person5, person3, 2, 0)
+	CreateGame(person2, person6, 2, 0)
+	CreateGame(person2, person6, 3, 0)
+	CreateGame(person5, person4, 3, 0)
+	CreateGame(person5, person3, 2, 0)
+	CreateGame(person5, person6, 2, 0)
+	CreateGame(person5, person6, 1, 0)
+	CreateGame(person5, person3, 2, 0)
+	CreateGame(person5, person7, 2, 0)
+	CreateGame(person6, person3, 5, 0)
+	CreateGame(person7, person6, 1, 1)
+	CreateGame(person7, person2, 1, 0)
+	CreateGame(person7, person3, 0, 13)
 
 	return person3, err
 

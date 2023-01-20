@@ -20,7 +20,7 @@ type DeleteGameRequest struct {
 func Handler(request events.APIGatewayProxyRequest) (events.APIGatewayProxyResponse, error) {
 
 	/* Auth */
-	err := helpers.CheckAccessKey(request, "")
+	err := helpers.CheckAccessKey(request, "", false)
 	if err != nil {
 		return events.APIGatewayProxyResponse{Body: err.Error(), StatusCode: 401}, nil
 	}
